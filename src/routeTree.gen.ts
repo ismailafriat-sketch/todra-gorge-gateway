@@ -9,8 +9,26 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as GorgeRouteImport } from './routes/gorge'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ChambresRouteImport } from './routes/chambres'
 import { Route as IndexRouteImport } from './routes/index'
 
+const GorgeRoute = GorgeRouteImport.update({
+  id: '/gorge',
+  path: '/gorge',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChambresRoute = ChambresRouteImport.update({
+  id: '/chambres',
+  path: '/chambres',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +37,61 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/chambres': typeof ChambresRoute
+  '/contact': typeof ContactRoute
+  '/gorge': typeof GorgeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/chambres': typeof ChambresRoute
+  '/contact': typeof ContactRoute
+  '/gorge': typeof GorgeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/chambres': typeof ChambresRoute
+  '/contact': typeof ContactRoute
+  '/gorge': typeof GorgeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/chambres' | '/contact' | '/gorge'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/chambres' | '/contact' | '/gorge'
+  id: '__root__' | '/' | '/chambres' | '/contact' | '/gorge'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChambresRoute: typeof ChambresRoute
+  ContactRoute: typeof ContactRoute
+  GorgeRoute: typeof GorgeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/gorge': {
+      id: '/gorge'
+      path: '/gorge'
+      fullPath: '/gorge'
+      preLoaderRoute: typeof GorgeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chambres': {
+      id: '/chambres'
+      path: '/chambres'
+      fullPath: '/chambres'
+      preLoaderRoute: typeof ChambresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +104,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChambresRoute: ChambresRoute,
+  ContactRoute: ContactRoute,
+  GorgeRoute: GorgeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
