@@ -3,6 +3,9 @@ import heroImg from "@/assets/hero-gorge.jpg";
 import courtyardImg from "@/assets/courtyard.jpg";
 import diningImg from "@/assets/dining.jpg";
 import roomImg from "@/assets/room.jpg";
+import poolImg from "@/assets/gallery/pool.jpg.asset.json";
+import valleyImg from "@/assets/gallery/valley.jpg.asset.json";
+import terraceImg from "@/assets/gallery/terrace.jpg.asset.json";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 
