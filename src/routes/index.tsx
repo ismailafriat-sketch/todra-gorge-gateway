@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroImg from "@/assets/hero-gorge.jpg";
-import diningImg from "@/assets/dining.jpg";
+import diningImg from "@/assets/dining/dining_candlelit.jpg.asset.json";
 import stripLeftImg from "@/assets/rooms/room_2.jpg.asset.json";
 import stripRightImg from "@/assets/rooms/room_5.jpg.asset.json";
 import poolImg from "@/assets/gallery/pool.jpg.asset.json";
