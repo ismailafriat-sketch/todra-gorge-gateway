@@ -135,12 +135,12 @@ function Chambres() {
                       {r.price} <span className="text-lg text-muted-foreground">MAD</span>
                     </p>
                   </div>
-                  <a
-                    href="tel:+212673454307"
+                  <Link
+                    to="/reservation"
                     className="rounded-full bg-primary px-5 py-3 text-sm text-primary-foreground hover:bg-primary/90"
                   >
                     Réserver
-                  </a>
+                  </Link>
                 </div>
               </div>
             </article>
