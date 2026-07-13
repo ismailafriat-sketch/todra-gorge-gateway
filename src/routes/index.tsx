@@ -153,7 +153,7 @@ function Home() {
       <section className="bg-ink text-primary-foreground">
         <div className="container-x grid gap-12 py-24 md:grid-cols-2 md:items-center md:py-32">
           <div className="aspect-[4/5] overflow-hidden rounded-sm md:order-2">
-            <img src={diningImg} alt="Tagine et thé à la menthe" width={1400} height={1400} loading="lazy" className="h-full w-full object-cover" />
+            <img src={diningImg.url} alt="Dîner aux chandelles dans la salle voûtée de l'auberge" width={1400} height={1400} loading="lazy" className="h-full w-full object-cover" />
           </div>
           <div className="md:order-1">
             <p className="eyebrow text-accent">La table</p>
