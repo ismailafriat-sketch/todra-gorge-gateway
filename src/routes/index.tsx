@@ -88,6 +88,38 @@ function Home() {
         </div>
       </section>
 
+      {/* GALLERY */}
+      <section className="container-x pt-16 md:pt-20">
+        <div className="grid gap-16 md:grid-cols-12 md:items-end mb-10">
+          <div className="md:col-span-5">
+            <p className="eyebrow">La maison</p>
+            <h2 className="mt-4 font-display text-4xl md:text-5xl">
+              Terrasse, piscine, vallée.
+            </h2>
+          </div>
+          <div className="md:col-span-6 md:col-start-7 text-muted-foreground leading-relaxed">
+            <p>
+              Une piscine taillée dans la pierre, une longue terrasse ouverte
+              sur le canyon, et au loin la palmeraie verte de Tinghir. Voilà
+              trois manières de prendre son temps à l'auberge.
+            </p>
+          </div>
+        </div>
+        <div className="grid gap-4 md:grid-cols-12">
+          <div className="md:col-span-5 aspect-[4/5] overflow-hidden rounded-sm">
+            <img src={poolImg.url} alt="Piscine en pierre face au ksar" loading="lazy" className="h-full w-full object-cover" />
+          </div>
+          <div className="md:col-span-7 aspect-[4/3] md:aspect-auto overflow-hidden rounded-sm">
+            <img src={terraceImg.url} alt="Terrasse en pierre ouverte sur la gorge" loading="lazy" className="h-full w-full object-cover" />
+          </div>
+          <div className="md:col-span-12 aspect-[21/9] overflow-hidden rounded-sm">
+            <img src={valleyImg.url} alt="Vue sur la palmeraie et les montagnes de Tinghir" loading="lazy" className="h-full w-full object-cover" />
+          </div>
+        </div>
+      </section>
+
+
+
       {/* FEATURES */}
       <section className="container-x py-24 md:py-32">
         <div className="grid gap-x-10 gap-y-14 md:grid-cols-3">
