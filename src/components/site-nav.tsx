@@ -4,6 +4,7 @@ import { useState } from "react";
 const links = [
   { to: "/", label: "Accueil" },
   { to: "/chambres", label: "Chambres" },
+  { to: "/galerie", label: "Galerie" },
   { to: "/gorge", label: "La Gorge" },
   { to: "/contact", label: "Contact" },
 ] as const;
@@ -30,12 +31,12 @@ export function SiteNav() {
             </Link>
           ))}
         </nav>
-        <a
-          href="tel:+212673454307"
+        <Link
+          to="/reservation"
           className="hidden md:inline-flex items-center rounded-full bg-primary-foreground/95 px-5 py-2 text-sm font-medium text-primary hover:bg-primary-foreground transition"
         >
           Réserver
-        </a>
+        </Link>
         <button
           className="md:hidden text-primary-foreground"
           onClick={() => setOpen(!open)}
