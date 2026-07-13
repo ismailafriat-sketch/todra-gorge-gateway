@@ -9,14 +9,26 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ReservationRouteImport } from './routes/reservation'
 import { Route as GorgeRouteImport } from './routes/gorge'
+import { Route as GalerieRouteImport } from './routes/galerie'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ChambresRouteImport } from './routes/chambres'
 import { Route as IndexRouteImport } from './routes/index'
 
+const ReservationRoute = ReservationRouteImport.update({
+  id: '/reservation',
+  path: '/reservation',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GorgeRoute = GorgeRouteImport.update({
   id: '/gorge',
   path: '/gorge',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalerieRoute = GalerieRouteImport.update({
+  id: '/galerie',
+  path: '/galerie',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -39,43 +51,78 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/chambres': typeof ChambresRoute
   '/contact': typeof ContactRoute
+  '/galerie': typeof GalerieRoute
   '/gorge': typeof GorgeRoute
+  '/reservation': typeof ReservationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/chambres': typeof ChambresRoute
   '/contact': typeof ContactRoute
+  '/galerie': typeof GalerieRoute
   '/gorge': typeof GorgeRoute
+  '/reservation': typeof ReservationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/chambres': typeof ChambresRoute
   '/contact': typeof ContactRoute
+  '/galerie': typeof GalerieRoute
   '/gorge': typeof GorgeRoute
+  '/reservation': typeof ReservationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/chambres' | '/contact' | '/gorge'
+  fullPaths:
+    | '/'
+    | '/chambres'
+    | '/contact'
+    | '/galerie'
+    | '/gorge'
+    | '/reservation'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/chambres' | '/contact' | '/gorge'
-  id: '__root__' | '/' | '/chambres' | '/contact' | '/gorge'
+  to: '/' | '/chambres' | '/contact' | '/galerie' | '/gorge' | '/reservation'
+  id:
+    | '__root__'
+    | '/'
+    | '/chambres'
+    | '/contact'
+    | '/galerie'
+    | '/gorge'
+    | '/reservation'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChambresRoute: typeof ChambresRoute
   ContactRoute: typeof ContactRoute
+  GalerieRoute: typeof GalerieRoute
   GorgeRoute: typeof GorgeRoute
+  ReservationRoute: typeof ReservationRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reservation': {
+      id: '/reservation'
+      path: '/reservation'
+      fullPath: '/reservation'
+      preLoaderRoute: typeof ReservationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gorge': {
       id: '/gorge'
       path: '/gorge'
       fullPath: '/gorge'
       preLoaderRoute: typeof GorgeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/galerie': {
+      id: '/galerie'
+      path: '/galerie'
+      fullPath: '/galerie'
+      preLoaderRoute: typeof GalerieRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -106,18 +153,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChambresRoute: ChambresRoute,
   ContactRoute: ContactRoute,
+  GalerieRoute: GalerieRoute,
   GorgeRoute: GorgeRoute,
+  ReservationRoute: ReservationRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
