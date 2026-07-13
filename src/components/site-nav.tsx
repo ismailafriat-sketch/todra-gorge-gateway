@@ -62,9 +62,9 @@ export function SiteNav() {
                 {l.label}
               </Link>
             ))}
-            <a href="tel:+212673454307" className="text-accent text-lg">
-              +212 673 45 43 07
-            </a>
+            <Link to="/reservation" onClick={() => setOpen(false)} className="text-accent text-lg">
+              Réserver
+            </Link>
           </div>
         </div>
       )}
