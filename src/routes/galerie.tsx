@@ -43,7 +43,11 @@ const groups = [
   },
   {
     title: "La table",
-    items: [{ src: dining.url, alt: "Dîner aux chandelles dans la salle voûtée" }],
+    items: [
+      { src: diningRoom.url, alt: "Salle à manger en pierre" },
+      { src: dining.url, alt: "Dîner aux chandelles dans la salle voûtée" },
+      { src: salon.url, alt: "Salon berbère avec coussins et tables sculptées" },
+    ],
   },
   {
     title: "Les chambres",
