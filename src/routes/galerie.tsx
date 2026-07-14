@@ -28,6 +28,16 @@ import room17b from "@/assets/rooms/room_17b.jpg.asset.json";
 import room18b from "@/assets/rooms/room_18b.jpg.asset.json";
 import bathWc from "@/assets/rooms/bath_wc.jpg.asset.json";
 import bathShower from "@/assets/rooms/bath_shower.jpg.asset.json";
+import g21 from "@/assets/gallery2/unnamed_21.jpg.asset.json";
+import g22 from "@/assets/gallery2/unnamed_22.jpg.asset.json";
+import g23 from "@/assets/gallery2/unnamed_23.jpg.asset.json";
+import g24 from "@/assets/gallery2/unnamed_24.jpg.asset.json";
+import g25 from "@/assets/gallery2/unnamed_25.jpg.asset.json";
+import g26 from "@/assets/gallery2/unnamed_26-2.jpg.asset.json";
+import g27 from "@/assets/gallery2/unnamed_27.jpg.asset.json";
+import g28 from "@/assets/gallery2/unnamed_28.jpg.asset.json";
+import g29 from "@/assets/gallery2/unnamed_29.jpg.asset.json";
+import g30 from "@/assets/gallery2/unnamed_30.jpg.asset.json";
 
 export const Route = createFileRoute("/galerie")({
   head: () => ({
@@ -49,14 +59,7 @@ const groups = [
       { src: pool.url, alt: "Piscine en pierre face au ksar" },
       { src: terrace.url, alt: "Terrasse ouverte sur la gorge" },
       { src: valley.url, alt: "Vue sur la palmeraie de Tinghir" },
-    ],
-  },
-  {
-    title: "La maison",
-    items: [
-      { src: pool.url, alt: "Piscine en pierre face au ksar" },
-      { src: terrace.url, alt: "Terrasse ouverte sur la gorge" },
-      { src: valley.url, alt: "Vue sur la palmeraie de Tinghir" },
+      { src: g25.url, alt: "Terrasse mosaïque avec vue sur la gorge et la piscine" },
       { src: nightKsar.url, alt: "L'auberge illuminée sous les étoiles" },
       { src: nightPool.url, alt: "Piscine éclairée à la tombée de la nuit" },
     ],
@@ -68,6 +71,12 @@ const groups = [
       { src: dining.url, alt: "Dîner aux chandelles dans la salle voûtée" },
       { src: salon.url, alt: "Salon berbère avec coussins et tables sculptées" },
       { src: lounge.url, alt: "Salon commun avec guitare et tambours" },
+      { src: g26.url, alt: "Dîner aux chandelles, entrée dressée" },
+      { src: g21.url, alt: "Tajine de courgettes gratinées" },
+      { src: g27.url, alt: "Tajine de légumes et gratin d'aubergines" },
+      { src: g28.url, alt: "Petit-déjeuner marocain avec confitures et huiles" },
+      { src: g29.url, alt: "Soupe marocaine servie chaude" },
+      { src: g24.url, alt: "Harira maison avec pain frais" },
     ],
   },
   {
@@ -76,6 +85,8 @@ const groups = [
       { src: room2.url, alt: "Chambre Rouge Berbère" },
       { src: room5.url, alt: "Chambre Troglodyte" },
       { src: room6.url, alt: "Chambre Familiale Zellige" },
+      { src: g22.url, alt: "Chambre troglodyte aux draps rouges" },
+      { src: g23.url, alt: "Salon-chambre en pierre avec fenêtres jumelées" },
       { src: room7.url, alt: "Chambre Pierre" },
       { src: room7b.url, alt: "Chambre aux couvre-lits rayés" },
       { src: room8.url, alt: "Chambre Vallée" },
@@ -93,6 +104,7 @@ const groups = [
     title: "Salles de bain",
     items: [
       { src: room11.url, alt: "Salle de bain en tadelakt rose" },
+      { src: g30.url, alt: "Salle de bain en tadelakt avec baignoire bleue" },
       { src: bathWc.url, alt: "WC séparés en pierre" },
       { src: bathShower.url, alt: "Douche voûtée aux murs jaunes" },
     ],
