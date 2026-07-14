@@ -18,6 +18,16 @@ import valley from "@/assets/gallery/valley.jpg.asset.json";
 import dining from "@/assets/dining/dining_candlelit.jpg.asset.json";
 import salon from "@/assets/common/salon.jpg.asset.json";
 import diningRoom from "@/assets/common/dining_room.jpg.asset.json";
+import nightKsar from "@/assets/gallery/night_ksar.jpg.asset.json";
+import nightPool from "@/assets/gallery/night_pool.jpg.asset.json";
+import lounge from "@/assets/gallery/lounge.jpg.asset.json";
+import room7b from "@/assets/rooms/room_7b.jpg.asset.json";
+import room8b from "@/assets/rooms/room_8b.jpg.asset.json";
+import room16b from "@/assets/rooms/room_16b.jpg.asset.json";
+import room17b from "@/assets/rooms/room_17b.jpg.asset.json";
+import room18b from "@/assets/rooms/room_18b.jpg.asset.json";
+import bathWc from "@/assets/rooms/bath_wc.jpg.asset.json";
+import bathShower from "@/assets/rooms/bath_shower.jpg.asset.json";
 
 export const Route = createFileRoute("/galerie")({
   head: () => ({
