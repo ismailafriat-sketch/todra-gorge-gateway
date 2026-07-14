@@ -52,11 +52,22 @@ const groups = [
     ],
   },
   {
-    title: "La table",
+    title: "La maison",
+    items: [
+      { src: pool.url, alt: "Piscine en pierre face au ksar" },
+      { src: terrace.url, alt: "Terrasse ouverte sur la gorge" },
+      { src: valley.url, alt: "Vue sur la palmeraie de Tinghir" },
+      { src: nightKsar.url, alt: "L'auberge illuminée sous les étoiles" },
+      { src: nightPool.url, alt: "Piscine éclairée à la tombée de la nuit" },
+    ],
+  },
+  {
+    title: "La table & les salons",
     items: [
       { src: diningRoom.url, alt: "Salle à manger en pierre" },
       { src: dining.url, alt: "Dîner aux chandelles dans la salle voûtée" },
       { src: salon.url, alt: "Salon berbère avec coussins et tables sculptées" },
+      { src: lounge.url, alt: "Salon commun avec guitare et tambours" },
     ],
   },
   {
@@ -66,12 +77,24 @@ const groups = [
       { src: room5.url, alt: "Chambre Troglodyte" },
       { src: room6.url, alt: "Chambre Familiale Zellige" },
       { src: room7.url, alt: "Chambre Pierre" },
+      { src: room7b.url, alt: "Chambre aux couvre-lits rayés" },
       { src: room8.url, alt: "Chambre Vallée" },
+      { src: room8b.url, alt: "Chambre en enfilade avec arche" },
       { src: room12.url, alt: "Chambre Twin Voûtée" },
       { src: room16.url, alt: "Chambre Twin Pierre" },
+      { src: room16b.url, alt: "Chambre jumeaux sous plafond de roche" },
       { src: room17.url, alt: "Chambre Safran" },
+      { src: room17b.url, alt: "Chambre à applique en laiton" },
       { src: room18.url, alt: "Chambre Atlas" },
-      { src: room11.url, alt: "Salle de bain en tadelakt" },
+      { src: room18b.url, alt: "Chambre en pierre avec rideaux orangés" },
+    ],
+  },
+  {
+    title: "Salles de bain",
+    items: [
+      { src: room11.url, alt: "Salle de bain en tadelakt rose" },
+      { src: bathWc.url, alt: "WC séparés en pierre" },
+      { src: bathShower.url, alt: "Douche voûtée aux murs jaunes" },
     ],
   },
 ];
