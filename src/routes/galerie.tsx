@@ -28,6 +28,16 @@ import room17b from "@/assets/rooms/room_17b.jpg.asset.json";
 import room18b from "@/assets/rooms/room_18b.jpg.asset.json";
 import bathWc from "@/assets/rooms/bath_wc.jpg.asset.json";
 import bathShower from "@/assets/rooms/bath_shower.jpg.asset.json";
+import g21 from "@/assets/gallery2/unnamed_21.jpg.asset.json";
+import g22 from "@/assets/gallery2/unnamed_22.jpg.asset.json";
+import g23 from "@/assets/gallery2/unnamed_23.jpg.asset.json";
+import g24 from "@/assets/gallery2/unnamed_24.jpg.asset.json";
+import g25 from "@/assets/gallery2/unnamed_25.jpg.asset.json";
+import g26 from "@/assets/gallery2/unnamed_26-2.jpg.asset.json";
+import g27 from "@/assets/gallery2/unnamed_27.jpg.asset.json";
+import g28 from "@/assets/gallery2/unnamed_28.jpg.asset.json";
+import g29 from "@/assets/gallery2/unnamed_29.jpg.asset.json";
+import g30 from "@/assets/gallery2/unnamed_30.jpg.asset.json";
 
 export const Route = createFileRoute("/galerie")({
   head: () => ({
