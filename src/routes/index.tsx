@@ -80,10 +80,10 @@ function Home() {
       <section className="container-x">
         <div className="grid gap-4 md:grid-cols-12">
           <div className="md:col-span-7 aspect-[4/3] md:aspect-[16/11] overflow-hidden rounded-sm">
-            <img src={stripLeftImg.url} alt="Salon berbère de l'auberge" loading="lazy" className="h-full w-full object-cover" />
+            <img src={stripLeftImg.url} alt="Salon berbère avec coussins et tables sculptées" loading="lazy" className="h-full w-full object-cover" />
           </div>
           <div className="md:col-span-5 aspect-[4/3] md:aspect-[16/11] overflow-hidden rounded-sm">
-            <img src={stripRightImg.url} alt="Chambre traditionnelle de l'auberge" loading="lazy" className="h-full w-full object-cover" />
+            <img src={stripRightImg.url} alt="Salle à manger en pierre avec tables en zellige" loading="lazy" className="h-full w-full object-cover" />
           </div>
         </div>
       </section>
