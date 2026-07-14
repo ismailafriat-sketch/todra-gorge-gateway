@@ -16,6 +16,8 @@ import pool from "@/assets/gallery/pool.jpg.asset.json";
 import terrace from "@/assets/gallery/terrace.jpg.asset.json";
 import valley from "@/assets/gallery/valley.jpg.asset.json";
 import dining from "@/assets/dining/dining_candlelit.jpg.asset.json";
+import salon from "@/assets/common/salon.jpg.asset.json";
+import diningRoom from "@/assets/common/dining_room.jpg.asset.json";
 
 export const Route = createFileRoute("/galerie")({
   head: () => ({
