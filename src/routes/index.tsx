@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroImg from "@/assets/hero-gorge.jpg";
 import diningImg from "@/assets/dining/dining_candlelit.jpg.asset.json";
-import stripLeftImg from "@/assets/rooms/room_2.jpg.asset.json";
-import stripRightImg from "@/assets/rooms/room_5.jpg.asset.json";
+import stripLeftImg from "@/assets/common/salon.jpg.asset.json";
+import stripRightImg from "@/assets/common/dining_room.jpg.asset.json";
 import poolImg from "@/assets/gallery/pool.jpg.asset.json";
 import valleyImg from "@/assets/gallery/valley.jpg.asset.json";
 import terraceImg from "@/assets/gallery/terrace.jpg.asset.json";
