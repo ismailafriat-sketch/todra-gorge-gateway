@@ -22,6 +22,38 @@ export const Route = createFileRoute("/reservation")({
   component: Reservation,
 });
 
+/* ────────────────────────────────────────────────────────────────────────────
+   ⚙️  BOOKING CONFIG — édite ici pour mettre à jour la disponibilité
+   ──────────────────────────────────────────────────────────────────────────── */
+const BOOKING_CONFIG: {
+  openFrom: string;
+  openUntil: string;
+  minNights: number;
+  maxNights: number;
+  blockedDates: string[];
+  paymentMethods: { id: string; label: string; detail: string }[];
+} = {
+  // Première date où l'auberge accepte des réservations (YYYY-MM-DD)
+  openFrom: "2026-07-15",
+  // Dernière date de départ acceptée
+  openUntil: "2027-12-31",
+  // Durée du séjour
+  minNights: 1,
+  maxNights: 21,
+  // Dates complètes / indisponibles (arrivée bloquée sur ces jours) — YYYY-MM-DD
+  blockedDates: [
+    // "2026-08-14",
+    // "2026-12-24",
+  ],
+  // Moyens de paiement proposés
+  paymentMethods: [
+    { id: "card_on_arrival", label: "Carte bancaire à l'arrivée", detail: "Visa, Mastercard — TPE à la réception." },
+    { id: "cash", label: "Espèces (MAD ou EUR)", detail: "Réglé à l'arrivée à l'accueil." },
+    { id: "bank_transfer", label: "Virement bancaire", detail: "IBAN communiqué par email après confirmation." },
+  ],
+};
+/* ──────────────────────────────────────────────────────────────────────────── */
+
 type Option = {
   label: string;
   original: number;
@@ -110,23 +142,54 @@ const rooms: RoomType[] = [
 ];
 
 const fmt = (n: number) => `MAD ${n.toLocaleString("fr-FR")}`;
-const tomorrow = () => {
-  const d = new Date();
-  d.setDate(d.getDate() + 1);
-  return d;
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+const addDays = (d: Date, n: number) => {
+  const c = new Date(d);
+  c.setDate(c.getDate() + n);
+  return c;
 };
-const dateLabel = (d: Date) =>
-  d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" });
+const parseISO = (s: string) => {
+  const [y, m, d] = s.split("-").map(Number);
+  return new Date(y, m - 1, d);
+};
+const nightsBetween = (a: string, b: string) =>
+  Math.round((parseISO(b).getTime() - parseISO(a).getTime()) / 86400000);
+const dateLabel = (s: string) =>
+  parseISO(s).toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+
+type Step = "select" | "checkout" | "receipt";
 
 function Reservation() {
-  const start = useMemo(() => new Date(), []);
-  const end = useMemo(() => tomorrow(), []);
-  const [filter, setFilter] = useState<"tous" | "chambres" | "appartements">("tous");
-  // selections keyed by `${roomId}:${optionIndex}`
-  const [sel, setSel] = useState<Record<string, number>>({});
+  const today = useMemo(() => {
+    const t = new Date();
+    const openFrom = parseISO(BOOKING_CONFIG.openFrom);
+    return iso(t < openFrom ? openFrom : t);
+  }, []);
+  const defaultOut = useMemo(() => iso(addDays(parseISO(today), 1)), [today]);
 
-  const setQty = (key: string, qty: number) =>
-    setSel((s) => ({ ...s, [key]: qty }));
+  const [checkIn, setCheckIn] = useState(today);
+  const [checkOut, setCheckOut] = useState(defaultOut);
+  const [filter, setFilter] = useState<"tous" | "chambres" | "appartements">("tous");
+  const [sel, setSel] = useState<Record<string, number>>({});
+  const [step, setStep] = useState<Step>("select");
+
+  // Guest / payment
+  const [guest, setGuest] = useState({ firstName: "", lastName: "", email: "", phone: "", notes: "" });
+  const [payment, setPayment] = useState(BOOKING_CONFIG.paymentMethods[0].id);
+  const [confirmation, setConfirmation] = useState<null | {
+    ref: string;
+    when: string;
+  }>(null);
+
+  const nights = Math.max(0, nightsBetween(checkIn, checkOut));
+  const isBlocked = BOOKING_CONFIG.blockedDates.includes(checkIn);
+  const validDates =
+    checkOut > checkIn &&
+    nights >= BOOKING_CONFIG.minNights &&
+    nights <= BOOKING_CONFIG.maxNights &&
+    !isBlocked;
+
+  const setQty = (key: string, qty: number) => setSel((s) => ({ ...s, [key]: qty }));
 
   const visible = rooms.filter((r) => {
     if (filter === "tous") return true;
@@ -134,46 +197,338 @@ function Reservation() {
     return !r.id.startsWith("appartement");
   });
 
-  const total = rooms.reduce((sum, r) => {
+  const perNight = rooms.reduce((sum, r) => {
     r.options.forEach((o, i) => {
-      const q = sel[`${r.id}:${i}`] ?? 0;
-      sum += q * o.price;
+      sum += (sel[`${r.id}:${i}`] ?? 0) * o.price;
     });
     return sum;
   }, 0);
-
+  const total = perNight * nights;
   const totalRooms = Object.values(sel).reduce((a, b) => a + b, 0);
 
+  const selectedLines = rooms.flatMap((r) =>
+    r.options
+      .map((o, i) => ({ r, o, i, qty: sel[`${r.id}:${i}`] ?? 0 }))
+      .filter((l) => l.qty > 0),
+  );
+
+  const canConfirm =
+    validDates &&
+    totalRooms > 0 &&
+    guest.firstName.trim() &&
+    guest.lastName.trim() &&
+    guest.email.trim() &&
+    guest.phone.trim();
+
+  const goCheckout = () => {
+    if (!validDates || totalRooms === 0) return;
+    setStep("checkout");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const confirmBooking = () => {
+    if (!canConfirm) return;
+    const ref = "AF-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+    setConfirmation({ ref, when: new Date().toLocaleString("fr-FR") });
+    setStep("receipt");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const resetAll = () => {
+    setSel({});
+    setConfirmation(null);
+    setStep("select");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  /* ═══════════════════════════ RECEIPT ═══════════════════════════ */
+  if (step === "receipt" && confirmation) {
+    const paymentLabel =
+      BOOKING_CONFIG.paymentMethods.find((p) => p.id === payment)?.label ?? payment;
+    return (
+      <div className="min-h-screen bg-background">
+        <SiteNav />
+        <section className="bg-ink pt-32 pb-10 text-primary-foreground">
+          <div className="container-x">
+            <p className="eyebrow text-accent">Confirmation</p>
+            <h1 className="mt-3 font-display text-4xl md:text-6xl">Merci, votre demande est enregistrée</h1>
+            <p className="mt-3 text-sm text-primary-foreground/70">
+              Un email de confirmation sera envoyé à {guest.email}.
+            </p>
+          </div>
+        </section>
+
+        <section className="container-x py-14">
+          <div className="mx-auto max-w-3xl border border-border rounded-sm bg-card p-8 print:border-0 print:p-0">
+            <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-4">
+              <div>
+                <p className="font-display text-2xl">Auberge Le Festival</p>
+                <p className="text-xs text-muted-foreground">Gorges du Todra · Tinghir, Maroc</p>
+                <p className="text-xs text-muted-foreground">+212 673 45 43 07</p>
+              </div>
+              <div className="text-right text-sm">
+                <p className="eyebrow">Reçu</p>
+                <p className="font-mono">{confirmation.ref}</p>
+                <p className="text-xs text-muted-foreground">{confirmation.when}</p>
+              </div>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2 py-6 border-b border-border">
+              <div>
+                <p className="eyebrow">Client</p>
+                <p className="mt-2 text-sm">{guest.firstName} {guest.lastName}</p>
+                <p className="text-sm text-muted-foreground">{guest.email}</p>
+                <p className="text-sm text-muted-foreground">{guest.phone}</p>
+              </div>
+              <div>
+                <p className="eyebrow">Séjour</p>
+                <p className="mt-2 text-sm">Arrivée · {dateLabel(checkIn)}</p>
+                <p className="text-sm">Départ · {dateLabel(checkOut)}</p>
+                <p className="text-sm text-muted-foreground">{nights} nuit{nights > 1 ? "s" : ""}</p>
+              </div>
+            </div>
+
+            <div className="py-6 border-b border-border">
+              <p className="eyebrow">Détail</p>
+              <table className="mt-3 w-full text-sm">
+                <thead className="text-left text-xs text-muted-foreground">
+                  <tr>
+                    <th className="py-2">Hébergement</th>
+                    <th>Qté</th>
+                    <th>Nuits</th>
+                    <th className="text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedLines.map((l) => (
+                    <tr key={`${l.r.id}:${l.i}`} className="border-t border-border">
+                      <td className="py-2">
+                        <p>{l.r.name}</p>
+                        <p className="text-xs text-muted-foreground">{l.o.label}</p>
+                      </td>
+                      <td>{l.qty}</td>
+                      <td>{nights}</td>
+                      <td className="text-right">{fmt(l.qty * l.o.price * nights)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr className="border-t border-border">
+                    <td colSpan={3} className="pt-3 text-right text-sm">Total (taxes comprises)</td>
+                    <td className="pt-3 text-right font-display text-2xl text-clay">{fmt(total)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <div className="py-6">
+              <p className="eyebrow">Paiement</p>
+              <p className="mt-2 text-sm">{paymentLabel}</p>
+              {guest.notes && (
+                <>
+                  <p className="eyebrow mt-6">Notes</p>
+                  <p className="mt-2 text-sm text-muted-foreground whitespace-pre-line">{guest.notes}</p>
+                </>
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-3 pt-2 print:hidden">
+              <button
+                onClick={() => window.print()}
+                className="rounded-full bg-primary text-primary-foreground px-6 py-3 text-sm hover:bg-primary/90"
+              >
+                Imprimer / PDF
+              </button>
+              <button
+                onClick={resetAll}
+                className="rounded-full border border-input px-6 py-3 text-sm hover:bg-accent/40"
+              >
+                Nouvelle réservation
+              </button>
+              <Link to="/" className="rounded-full border border-input px-6 py-3 text-sm hover:bg-accent/40">
+                Retour à l'accueil
+              </Link>
+            </div>
+          </div>
+        </section>
+        <SiteFooter />
+      </div>
+    );
+  }
+
+  /* ═══════════════════════════ CHECKOUT ═══════════════════════════ */
+  if (step === "checkout") {
+    return (
+      <div className="min-h-screen bg-background">
+        <SiteNav />
+        <section className="bg-ink pt-32 pb-10 text-primary-foreground">
+          <div className="container-x">
+            <p className="eyebrow text-accent">Étape 2 / 2</p>
+            <h1 className="mt-3 font-display text-4xl md:text-6xl">Vos informations & paiement</h1>
+          </div>
+        </section>
+
+        <section className="container-x py-12 grid gap-10 md:grid-cols-12">
+          <div className="md:col-span-7 space-y-8">
+            <div>
+              <p className="eyebrow">Coordonnées</p>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <Field label="Prénom" value={guest.firstName} onChange={(v) => setGuest({ ...guest, firstName: v })} />
+                <Field label="Nom" value={guest.lastName} onChange={(v) => setGuest({ ...guest, lastName: v })} />
+                <Field label="Email" type="email" value={guest.email} onChange={(v) => setGuest({ ...guest, email: v })} />
+                <Field label="Téléphone" type="tel" value={guest.phone} onChange={(v) => setGuest({ ...guest, phone: v })} />
+              </div>
+              <div className="mt-4">
+                <label className="block text-xs text-muted-foreground mb-1">Notes (optionnel)</label>
+                <textarea
+                  value={guest.notes}
+                  onChange={(e) => setGuest({ ...guest, notes: e.target.value })}
+                  rows={3}
+                  className="w-full rounded-sm border border-input bg-background px-3 py-2 text-sm"
+                  placeholder="Heure d'arrivée approximative, demandes particulières…"
+                />
+              </div>
+            </div>
+
+            <div>
+              <p className="eyebrow">Moyen de paiement</p>
+              <div className="mt-4 space-y-3">
+                {BOOKING_CONFIG.paymentMethods.map((m) => (
+                  <label
+                    key={m.id}
+                    className={`flex gap-3 rounded-sm border p-4 cursor-pointer transition ${
+                      payment === m.id ? "border-clay bg-clay/5" : "border-border hover:bg-accent/30"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment"
+                      value={m.id}
+                      checked={payment === m.id}
+                      onChange={() => setPayment(m.id)}
+                      className="mt-1"
+                    />
+                    <div>
+                      <p className="text-sm font-medium">{m.label}</p>
+                      <p className="text-xs text-muted-foreground">{m.detail}</p>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setStep("select")}
+                className="rounded-full border border-input px-6 py-3 text-sm hover:bg-accent/40"
+              >
+                ← Modifier la sélection
+              </button>
+              <button
+                onClick={confirmBooking}
+                disabled={!canConfirm}
+                className={`rounded-full px-6 py-3 text-sm font-medium transition ${
+                  canConfirm
+                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                    : "bg-muted text-muted-foreground cursor-not-allowed"
+                }`}
+              >
+                Confirmer la réservation · {fmt(total)}
+              </button>
+            </div>
+          </div>
+
+          <aside className="md:col-span-5">
+            <div className="sticky top-24 rounded-sm border border-border bg-card p-6">
+              <p className="eyebrow">Récapitulatif</p>
+              <p className="mt-3 text-sm">
+                {dateLabel(checkIn)} → {dateLabel(checkOut)}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {nights} nuit{nights > 1 ? "s" : ""} · {totalRooms} chambre{totalRooms > 1 ? "s" : ""}
+              </p>
+              <ul className="mt-4 divide-y divide-border text-sm">
+                {selectedLines.map((l) => (
+                  <li key={`${l.r.id}:${l.i}`} className="py-3 flex justify-between gap-3">
+                    <div>
+                      <p>{l.r.name} × {l.qty}</p>
+                      <p className="text-xs text-muted-foreground">{l.o.label}</p>
+                    </div>
+                    <p className="whitespace-nowrap">{fmt(l.qty * l.o.price * nights)}</p>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-4 flex items-baseline justify-between border-t border-border pt-4">
+                <span className="text-sm">Total</span>
+                <span className="font-display text-2xl text-clay">{fmt(total)}</span>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">Taxes et frais compris</p>
+            </div>
+          </aside>
+        </section>
+        <SiteFooter />
+      </div>
+    );
+  }
+
+  /* ═══════════════════════════ SELECT ═══════════════════════════ */
   return (
     <div className="min-h-screen bg-background">
       <SiteNav />
 
-      {/* HEADER */}
       <section className="bg-ink pt-32 pb-10 text-primary-foreground">
         <div className="container-x">
-          <p className="eyebrow text-accent">Disponibilité</p>
-          <h1 className="mt-3 font-display text-4xl md:text-6xl">
-            Nous ajustons nos tarifs
-          </h1>
+          <p className="eyebrow text-accent">Étape 1 / 2 · Disponibilité</p>
+          <h1 className="mt-3 font-display text-4xl md:text-6xl">Choisissez vos dates & vos chambres</h1>
           <p className="mt-3 text-sm text-primary-foreground/70">
-            Tarifs convertis en MAD · Taxes et frais compris
+            Tarifs en MAD · Taxes et frais compris · Minimum {BOOKING_CONFIG.minNights} nuit
           </p>
         </div>
       </section>
 
-      {/* SEARCH SUMMARY */}
+      {/* DATE PICKER */}
       <section className="border-b border-border bg-muted/40">
-        <div className="container-x flex flex-wrap items-center gap-4 py-5 text-sm">
-          <div className="flex items-center gap-2">
-            <span className="font-display text-lg">
-              {dateLabel(start)} — {dateLabel(end)}
-            </span>
+        <div className="container-x grid gap-4 py-6 md:grid-cols-4 items-end">
+          <div>
+            <label className="block text-xs text-muted-foreground mb-1">Arrivée</label>
+            <input
+              type="date"
+              value={checkIn}
+              min={BOOKING_CONFIG.openFrom}
+              max={BOOKING_CONFIG.openUntil}
+              onChange={(e) => {
+                const v = e.target.value;
+                setCheckIn(v);
+                if (parseISO(checkOut) <= parseISO(v)) setCheckOut(iso(addDays(parseISO(v), 1)));
+              }}
+              className="w-full rounded-sm border border-input bg-background px-3 py-2 text-sm"
+            />
           </div>
-          <span className="text-muted-foreground">·</span>
-          <span>2 adultes · 0 enfant · 1 chambre</span>
-          <button className="ml-auto rounded-full border border-input px-4 py-1.5 text-xs hover:bg-accent/40">
-            Modifier la recherche
-          </button>
+          <div>
+            <label className="block text-xs text-muted-foreground mb-1">Départ</label>
+            <input
+              type="date"
+              value={checkOut}
+              min={iso(addDays(parseISO(checkIn), BOOKING_CONFIG.minNights))}
+              max={BOOKING_CONFIG.openUntil}
+              onChange={(e) => setCheckOut(e.target.value)}
+              className="w-full rounded-sm border border-input bg-background px-3 py-2 text-sm"
+            />
+          </div>
+          <div className="text-sm">
+            <p className="text-xs text-muted-foreground">Durée</p>
+            <p className="font-display text-2xl mt-0.5">
+              {nights} nuit{nights > 1 ? "s" : ""}
+            </p>
+          </div>
+          <div className="text-sm">
+            {isBlocked && <p className="text-clay">Cette date d'arrivée n'est pas disponible.</p>}
+            {!isBlocked && nights < BOOKING_CONFIG.minNights && (
+              <p className="text-clay">Minimum {BOOKING_CONFIG.minNights} nuit.</p>
+            )}
+            {!isBlocked && nights > BOOKING_CONFIG.maxNights && (
+              <p className="text-clay">Maximum {BOOKING_CONFIG.maxNights} nuits.</p>
+            )}
+            {validDates && <p className="text-muted-foreground">2 adultes · 0 enfant</p>}
+          </div>
         </div>
       </section>
 
@@ -232,6 +587,7 @@ function Reservation() {
                 const key = `${r.id}:${i}`;
                 const qty = sel[key] ?? 0;
                 const discount = Math.round((1 - o.price / o.original) * 100);
+                const lineTotal = qty * o.price * Math.max(1, nights);
                 return (
                   <div key={i} className="grid gap-6 md:grid-cols-12 p-6 items-start">
                     <div className="md:col-span-4">
@@ -247,7 +603,7 @@ function Reservation() {
                         <span className="font-display text-2xl text-clay">{fmt(o.price)}</span>
                         <span className="rounded-sm bg-clay/10 px-1.5 py-0.5 text-xs text-clay">-{discount} %</span>
                       </div>
-                      <p className="mt-1 text-xs text-muted-foreground">Taxes et frais compris</p>
+                      <p className="mt-1 text-xs text-muted-foreground">par nuit · taxes comprises</p>
                       <ul className="mt-3 space-y-1 text-xs">
                         {o.perks.map((p) => (
                           <li key={p}>· {p}</li>
@@ -265,7 +621,7 @@ function Reservation() {
                       >
                         {Array.from({ length: o.maxAvailable + 1 }, (_, n) => (
                           <option key={n} value={n}>
-                            {n} {n > 0 ? `(${fmt(n * o.price)})` : ""}
+                            {n} {n > 0 ? `(${fmt(n * o.price * Math.max(1, nights))} / ${Math.max(1, nights)} n)` : ""}
                           </option>
                         ))}
                       </select>
@@ -283,20 +639,21 @@ function Reservation() {
         <div className="container-x flex flex-wrap items-center gap-4 py-4">
           <div>
             <p className="text-xs text-muted-foreground">
-              {totalRooms} chambre{totalRooms > 1 ? "s" : ""} · Taxes et frais compris
+              {totalRooms} chambre{totalRooms > 1 ? "s" : ""} · {nights} nuit{nights > 1 ? "s" : ""} · taxes comprises
             </p>
             <p className="font-display text-2xl text-clay">{fmt(total)}</p>
           </div>
-          <a
-            href="tel:+212673454307"
+          <button
+            onClick={goCheckout}
+            disabled={!validDates || totalRooms === 0}
             className={`ml-auto rounded-full px-6 py-3 text-sm font-medium transition ${
-              total > 0
+              validDates && totalRooms > 0
                 ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                : "bg-muted text-muted-foreground pointer-events-none"
+                : "bg-muted text-muted-foreground cursor-not-allowed"
             }`}
           >
-            Réserver — Appeler l'auberge
-          </a>
+            Continuer vers le paiement
+          </button>
           <Link
             to="/contact"
             className="rounded-full border border-input px-6 py-3 text-sm hover:bg-accent/40"
@@ -306,96 +663,31 @@ function Reservation() {
         </div>
       </section>
 
-      {/* REVIEWS SNIPPET */}
-      <section className="border-t border-border bg-muted/40">
-        <div className="container-x py-16 grid gap-10 md:grid-cols-12">
-          <div className="md:col-span-4">
-            <p className="eyebrow">Commentaires clients</p>
-            <div className="mt-4 flex items-end gap-3">
-              <span className="font-display text-5xl text-clay">9,3</span>
-              <div className="text-sm">
-                <p className="font-medium">Fabuleux</p>
-                <p className="text-muted-foreground">1 385 expériences vécues</p>
-              </div>
-            </div>
-            <ul className="mt-6 space-y-2 text-sm">
-              {[
-                ["Personnel", "9,5"],
-                ["Équipements", "9,2"],
-                ["Propreté", "9,3"],
-                ["Confort", "9,3"],
-                ["Rapport qualité/prix", "9,1"],
-                ["Situation géographique", "9,8"],
-              ].map(([k, v]) => (
-                <li key={k} className="flex justify-between border-b border-border pb-1">
-                  <span>{k}</span>
-                  <span className="text-clay">{v}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="md:col-span-8 grid gap-4 md:grid-cols-2">
-            {[
-              { n: "Régis · Suisse", t: "Belle découverte, chambre troglodyte, cadre magnifique." },
-              { n: "Hervé · Madagascar", t: "Le personnel est extrêmement serviable. La situation est magnifique, elle permet de merveilleuses randonnées." },
-              { n: "Sylvie · France", t: "Une grotte qui donne sur la terrasse… si insolite et romantique. Un séjour inoubliable." },
-              { n: "François · France", t: "Expérience dans un lieu unique, assez haut de gamme. Équipe très sympa et très bon repas." },
-            ].map((c) => (
-              <blockquote key={c.n} className="rounded-sm border border-border bg-background p-5 text-sm">
-                <p className="italic">« {c.t} »</p>
-                <footer className="mt-3 text-xs text-muted-foreground">— {c.n}</footer>
-              </blockquote>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* AMENITIES */}
-      <section className="container-x py-16">
-        <p className="eyebrow">Équipements — note 9,2</p>
-        <h2 className="mt-3 font-display text-3xl md:text-4xl">Ses points forts</h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-4 text-sm">
-          {[
-            "Piscine extérieure",
-            "Chambres non-fumeurs",
-            "Wi-Fi gratuit",
-            "Parking gratuit",
-            "Chambres familiales",
-            "Restaurant",
-            "Service d'étage",
-            "Petit-déjeuner exceptionnel",
-            "Terrasse & jardin",
-            "Location de vélos",
-            "Randonnée & cyclisme",
-            "Bureau d'excursions",
-          ].map((x) => (
-            <div key={x} className="border-t border-border pt-3">
-              <p>{x}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* NEARBY */}
-      <section className="border-t border-border bg-muted/40">
-        <div className="container-x py-16">
-          <p className="eyebrow">Environs</p>
-          <h2 className="mt-3 font-display text-3xl">Excellent emplacement</h2>
-          <ul className="mt-6 space-y-3 text-sm">
-            <li className="flex justify-between border-b border-border pb-2">
-              <span>Restaurant La Petite Gorge — Todra Gorges, Tinghir</span>
-              <span className="text-muted-foreground">2,4 km</span>
-            </li>
-            <li className="flex justify-between border-b border-border pb-2">
-              <span>Café Agdal</span>
-              <span className="text-muted-foreground">12 km</span>
-            </li>
-          </ul>
-          <img src={room18.url} alt="" className="mt-10 h-64 w-full object-cover rounded-sm" />
-        </div>
-      </section>
-
       <SiteFooter />
+    </div>
+  );
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  type = "text",
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
+}) {
+  return (
+    <div>
+      <label className="block text-xs text-muted-foreground mb-1">{label}</label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-sm border border-input bg-background px-3 py-2 text-sm"
+      />
     </div>
   );
 }
