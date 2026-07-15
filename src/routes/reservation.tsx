@@ -25,7 +25,14 @@ export const Route = createFileRoute("/reservation")({
 /* ────────────────────────────────────────────────────────────────────────────
    ⚙️  BOOKING CONFIG — édite ici pour mettre à jour la disponibilité
    ──────────────────────────────────────────────────────────────────────────── */
-const BOOKING_CONFIG = {
+const BOOKING_CONFIG: {
+  openFrom: string;
+  openUntil: string;
+  minNights: number;
+  maxNights: number;
+  blockedDates: string[];
+  paymentMethods: { id: string; label: string; detail: string }[];
+} = {
   // Première date où l'auberge accepte des réservations (YYYY-MM-DD)
   openFrom: "2026-07-15",
   // Dernière date de départ acceptée
@@ -44,7 +51,7 @@ const BOOKING_CONFIG = {
     { id: "cash", label: "Espèces (MAD ou EUR)", detail: "Réglé à l'arrivée à l'accueil." },
     { id: "bank_transfer", label: "Virement bancaire", detail: "IBAN communiqué par email après confirmation." },
   ],
-} as const;
+};
 /* ──────────────────────────────────────────────────────────────────────────── */
 
 type Option = {
