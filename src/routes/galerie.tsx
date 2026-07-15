@@ -33,7 +33,7 @@ import g22 from "@/assets/gallery2/unnamed_22.jpg.asset.json";
 import g23 from "@/assets/gallery2/unnamed_23.jpg.asset.json";
 import g24 from "@/assets/gallery2/unnamed_24.jpg.asset.json";
 import g25 from "@/assets/gallery2/unnamed_25.jpg.asset.json";
-import g26 from "@/assets/gallery2/unnamed_26-2.jpg.asset.json";
+
 import g27 from "@/assets/gallery2/unnamed_27.jpg.asset.json";
 import g28 from "@/assets/gallery2/unnamed_28.jpg.asset.json";
 import g29 from "@/assets/gallery2/unnamed_29.jpg.asset.json";
