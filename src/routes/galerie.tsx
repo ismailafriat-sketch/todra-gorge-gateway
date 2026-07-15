@@ -33,7 +33,7 @@ import g22 from "@/assets/gallery2/unnamed_22.jpg.asset.json";
 import g23 from "@/assets/gallery2/unnamed_23.jpg.asset.json";
 import g24 from "@/assets/gallery2/unnamed_24.jpg.asset.json";
 import g25 from "@/assets/gallery2/unnamed_25.jpg.asset.json";
-import g26 from "@/assets/gallery2/unnamed_26-2.jpg.asset.json";
+
 import g27 from "@/assets/gallery2/unnamed_27.jpg.asset.json";
 import g28 from "@/assets/gallery2/unnamed_28.jpg.asset.json";
 import g29 from "@/assets/gallery2/unnamed_29.jpg.asset.json";
@@ -71,7 +71,7 @@ const groups = [
       { src: dining.url, alt: "Dîner aux chandelles dans la salle voûtée" },
       { src: salon.url, alt: "Salon berbère avec coussins et tables sculptées" },
       { src: lounge.url, alt: "Salon commun avec guitare et tambours" },
-      { src: g26.url, alt: "Dîner aux chandelles, entrée dressée" },
+      
       { src: g21.url, alt: "Tajine de courgettes gratinées" },
       { src: g27.url, alt: "Tajine de légumes et gratin d'aubergines" },
       { src: g28.url, alt: "Petit-déjeuner marocain avec confitures et huiles" },
