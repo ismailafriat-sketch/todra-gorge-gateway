@@ -71,7 +71,7 @@ const groups = [
       { src: dining.url, alt: "Dîner aux chandelles dans la salle voûtée" },
       { src: salon.url, alt: "Salon berbère avec coussins et tables sculptées" },
       { src: lounge.url, alt: "Salon commun avec guitare et tambours" },
-      { src: g26.url, alt: "Dîner aux chandelles, entrée dressée" },
+      
       { src: g21.url, alt: "Tajine de courgettes gratinées" },
       { src: g27.url, alt: "Tajine de légumes et gratin d'aubergines" },
       { src: g28.url, alt: "Petit-déjeuner marocain avec confitures et huiles" },
