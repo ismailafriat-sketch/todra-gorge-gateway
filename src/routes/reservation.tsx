@@ -31,7 +31,6 @@ const BOOKING_CONFIG: {
   minNights: number;
   maxNights: number;
   blockedDates: string[];
-  paymentMethods: { id: string; label: string; detail: string }[];
 } = {
   // Première date où l'auberge accepte des réservations (YYYY-MM-DD)
   openFrom: "2026-07-15",
@@ -40,19 +39,15 @@ const BOOKING_CONFIG: {
   // Durée du séjour
   minNights: 1,
   maxNights: 21,
-  // Dates complètes / indisponibles (arrivée bloquée sur ces jours) — YYYY-MM-DD
+  // Dates complètes / indisponibles — YYYY-MM-DD
   blockedDates: [
     // "2026-08-14",
-    // "2026-12-24",
-  ],
-  // Moyens de paiement proposés
-  paymentMethods: [
-    { id: "card_on_arrival", label: "Carte bancaire à l'arrivée", detail: "Visa, Mastercard — TPE à la réception." },
-    { id: "cash", label: "Espèces (MAD ou EUR)", detail: "Réglé à l'arrivée à l'accueil." },
-    { id: "bank_transfer", label: "Virement bancaire", detail: "IBAN communiqué par email après confirmation." },
   ],
 };
+
+type PaymentMethod = "card" | "paypal";
 /* ──────────────────────────────────────────────────────────────────────────── */
+
 
 type Option = {
   label: string;
