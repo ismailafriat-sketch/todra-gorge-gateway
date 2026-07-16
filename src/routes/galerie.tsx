@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 import room2 from "@/assets/rooms/room_2.jpg.asset.json";
@@ -33,7 +33,6 @@ import g22 from "@/assets/gallery2/unnamed_22.jpg.asset.json";
 import g23 from "@/assets/gallery2/unnamed_23.jpg.asset.json";
 import g24 from "@/assets/gallery2/unnamed_24.jpg.asset.json";
 import g25 from "@/assets/gallery2/unnamed_25.jpg.asset.json";
-
 import g27 from "@/assets/gallery2/unnamed_27.jpg.asset.json";
 import g28 from "@/assets/gallery2/unnamed_28.jpg.asset.json";
 import g29 from "@/assets/gallery2/unnamed_29.jpg.asset.json";
@@ -52,67 +51,90 @@ export const Route = createFileRoute("/galerie")({
   component: Galerie,
 });
 
-const groups = [
-  {
-    title: "La maison",
-    items: [
-      { src: pool.url, alt: "Piscine en pierre face au ksar" },
-      { src: terrace.url, alt: "Terrasse ouverte sur la gorge" },
-      { src: valley.url, alt: "Vue sur la palmeraie de Tinghir" },
-      { src: g25.url, alt: "Terrasse mosaïque avec vue sur la gorge et la piscine" },
-      { src: nightKsar.url, alt: "L'auberge illuminée sous les étoiles" },
-      { src: nightPool.url, alt: "Piscine éclairée à la tombée de la nuit" },
-    ],
-  },
-  {
-    title: "La table & les salons",
-    items: [
-      { src: diningRoom.url, alt: "Salle à manger en pierre" },
-      { src: dining.url, alt: "Dîner aux chandelles dans la salle voûtée" },
-      { src: salon.url, alt: "Salon berbère avec coussins et tables sculptées" },
-      { src: lounge.url, alt: "Salon commun avec guitare et tambours" },
-      
-      { src: g21.url, alt: "Tajine de courgettes gratinées" },
-      { src: g27.url, alt: "Tajine de légumes et gratin d'aubergines" },
-      { src: g28.url, alt: "Petit-déjeuner marocain avec confitures et huiles" },
-      { src: g29.url, alt: "Soupe marocaine servie chaude" },
-      { src: g24.url, alt: "Harira maison avec pain frais" },
-    ],
-  },
-  {
-    title: "Les chambres",
-    items: [
-      { src: room2.url, alt: "Chambre Rouge Berbère" },
-      { src: room5.url, alt: "Chambre Troglodyte" },
-      { src: room6.url, alt: "Chambre Familiale Zellige" },
-      { src: g22.url, alt: "Chambre troglodyte aux draps rouges" },
-      { src: g23.url, alt: "Salon-chambre en pierre avec fenêtres jumelées" },
-      { src: room7.url, alt: "Chambre Pierre" },
-      { src: room7b.url, alt: "Chambre aux couvre-lits rayés" },
-      { src: room8.url, alt: "Chambre Vallée" },
-      { src: room8b.url, alt: "Chambre en enfilade avec arche" },
-      { src: room12.url, alt: "Chambre Twin Voûtée" },
-      { src: room16.url, alt: "Chambre Twin Pierre" },
-      { src: room16b.url, alt: "Chambre jumeaux sous plafond de roche" },
-      { src: room17.url, alt: "Chambre Safran" },
-      { src: room17b.url, alt: "Chambre à applique en laiton" },
-      { src: room18.url, alt: "Chambre Atlas" },
-      { src: room18b.url, alt: "Chambre en pierre avec rideaux orangés" },
-    ],
-  },
-  {
-    title: "Salles de bain",
-    items: [
-      { src: room11.url, alt: "Salle de bain en tadelakt rose" },
-      { src: g30.url, alt: "Salle de bain en tadelakt avec baignoire bleue" },
-      { src: bathWc.url, alt: "WC séparés en pierre" },
-      { src: bathShower.url, alt: "Douche voûtée aux murs jaunes" },
-    ],
-  },
+/* ────────────────────────────────────────────────────────────────────
+   🖼️  GALERIE — pour ajouter une image, ajoute simplement une ligne
+   { src: ..., alt: "...", category: "maison" | "table" | "chambres" | "bains" }
+   ──────────────────────────────────────────────────────────────────── */
+type Category = "maison" | "table" | "chambres" | "bains";
+
+const CATEGORIES: { key: "all" | Category; label: string }[] = [
+  { key: "all", label: "Tout" },
+  { key: "maison", label: "La maison" },
+  { key: "table", label: "La table & les salons" },
+  { key: "chambres", label: "Les chambres" },
+  { key: "bains", label: "Salles de bain" },
+];
+
+const IMAGES: { src: string; alt: string; category: Category }[] = [
+  // La maison
+  { src: pool.url, alt: "Piscine en pierre face au ksar", category: "maison" },
+  { src: terrace.url, alt: "Terrasse ouverte sur la gorge", category: "maison" },
+  { src: valley.url, alt: "Vue sur la palmeraie de Tinghir", category: "maison" },
+  { src: g25.url, alt: "Terrasse mosaïque avec vue sur la gorge et la piscine", category: "maison" },
+  { src: nightKsar.url, alt: "L'auberge illuminée sous les étoiles", category: "maison" },
+  { src: nightPool.url, alt: "Piscine éclairée à la tombée de la nuit", category: "maison" },
+
+  // La table & les salons
+  { src: diningRoom.url, alt: "Salle à manger en pierre", category: "table" },
+  { src: dining.url, alt: "Dîner aux chandelles dans la salle voûtée", category: "table" },
+  { src: salon.url, alt: "Salon berbère avec coussins et tables sculptées", category: "table" },
+  { src: lounge.url, alt: "Salon commun avec guitare et tambours", category: "table" },
+  { src: g21.url, alt: "Tajine de courgettes gratinées", category: "table" },
+  { src: g27.url, alt: "Tajine de légumes et gratin d'aubergines", category: "table" },
+  { src: g28.url, alt: "Petit-déjeuner marocain avec confitures et huiles", category: "table" },
+  { src: g29.url, alt: "Soupe marocaine servie chaude", category: "table" },
+  { src: g24.url, alt: "Harira maison avec pain frais", category: "table" },
+
+  // Les chambres
+  { src: room2.url, alt: "Chambre Rouge Berbère", category: "chambres" },
+  { src: room5.url, alt: "Chambre Troglodyte", category: "chambres" },
+  { src: room6.url, alt: "Chambre Familiale Zellige", category: "chambres" },
+  { src: g22.url, alt: "Chambre troglodyte aux draps rouges", category: "chambres" },
+  { src: g23.url, alt: "Salon-chambre en pierre avec fenêtres jumelées", category: "chambres" },
+  { src: room7.url, alt: "Chambre Pierre", category: "chambres" },
+  { src: room7b.url, alt: "Chambre aux couvre-lits rayés", category: "chambres" },
+  { src: room8.url, alt: "Chambre Vallée", category: "chambres" },
+  { src: room8b.url, alt: "Chambre en enfilade avec arche", category: "chambres" },
+  { src: room12.url, alt: "Chambre Twin Voûtée", category: "chambres" },
+  { src: room16.url, alt: "Chambre Twin Pierre", category: "chambres" },
+  { src: room16b.url, alt: "Chambre jumeaux sous plafond de roche", category: "chambres" },
+  { src: room17.url, alt: "Chambre Safran", category: "chambres" },
+  { src: room17b.url, alt: "Chambre à applique en laiton", category: "chambres" },
+  { src: room18.url, alt: "Chambre Atlas", category: "chambres" },
+  { src: room18b.url, alt: "Chambre en pierre avec rideaux orangés", category: "chambres" },
+
+  // Salles de bain
+  { src: room11.url, alt: "Salle de bain en tadelakt rose", category: "bains" },
+  { src: g30.url, alt: "Salle de bain en tadelakt avec baignoire bleue", category: "bains" },
+  { src: bathWc.url, alt: "WC séparés en pierre", category: "bains" },
+  { src: bathShower.url, alt: "Douche voûtée aux murs jaunes", category: "bains" },
 ];
 
 function Galerie() {
-  const [lightbox, setLightbox] = useState<string | null>(null);
+  const [filter, setFilter] = useState<"all" | Category>("all");
+  const [lightbox, setLightbox] = useState<number | null>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  const items = IMAGES.filter((i) => filter === "all" || i.category === filter);
+
+  const scrollBy = (dir: 1 | -1) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const amount = el.clientWidth * 0.9 * dir;
+    el.scrollBy({ left: amount, behavior: "smooth" });
+  };
+
+  // Keyboard nav in lightbox
+  useEffect(() => {
+    if (lightbox === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightbox(null);
+      if (e.key === "ArrowRight") setLightbox((i) => (i === null ? null : (i + 1) % items.length));
+      if (e.key === "ArrowLeft") setLightbox((i) => (i === null ? null : (i - 1 + items.length) % items.length));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightbox, items.length]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -125,47 +147,135 @@ function Galerie() {
             L'auberge, en images.
           </h1>
           <p className="mt-4 max-w-xl text-primary-foreground/70">
-            Chambres, terrasse, piscine, table et paysages des Gorges du Todra.
+            Faites défiler à gauche ou à droite. Cliquez sur une photo pour l'agrandir.
           </p>
         </div>
       </section>
 
-      <div className="container-x py-16 space-y-20">
-        {groups.map((g) => (
-          <section key={g.title}>
-            <p className="eyebrow">{g.title}</p>
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
-              {g.items.map((img) => (
-                <button
-                  key={img.src}
-                  onClick={() => setLightbox(img.src)}
-                  className="aspect-[4/5] overflow-hidden rounded-sm group"
-                >
-                  <img
-                    src={img.src}
-                    alt={img.alt}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                  />
-                </button>
-              ))}
-            </div>
-          </section>
-        ))}
+      {/* Filters */}
+      <div className="container-x pt-10">
+        <div className="flex flex-wrap gap-2">
+          {CATEGORIES.map((c) => (
+            <button
+              key={c.key}
+              onClick={() => setFilter(c.key)}
+              className={`rounded-full px-4 py-1.5 text-xs border transition ${
+                filter === c.key
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "border-input hover:bg-accent/40"
+              }`}
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {lightbox && (
+      {/* Slider */}
+      <section className="container-x py-10">
+        <div className="relative">
+          <button
+            onClick={() => scrollBy(-1)}
+            aria-label="Précédent"
+            className="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 z-10 h-11 w-11 items-center justify-center rounded-full bg-ink text-primary-foreground shadow-lg hover:bg-ink/90"
+          >
+            ‹
+          </button>
+          <button
+            onClick={() => scrollBy(1)}
+            aria-label="Suivant"
+            className="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 h-11 w-11 items-center justify-center rounded-full bg-ink text-primary-foreground shadow-lg hover:bg-ink/90"
+          >
+            ›
+          </button>
+
+          <div
+            ref={trackRef}
+            className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4"
+            style={{ scrollbarWidth: "thin" }}
+          >
+            {items.map((img, i) => (
+              <button
+                key={img.src}
+                onClick={() => setLightbox(i)}
+                className="snap-start shrink-0 w-[85%] sm:w-[55%] md:w-[42%] lg:w-[32%] aspect-[4/5] overflow-hidden rounded-sm group"
+              >
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                />
+              </button>
+            ))}
+          </div>
+
+          {/* Mobile arrows */}
+          <div className="md:hidden flex justify-center gap-3 pt-2">
+            <button
+              onClick={() => scrollBy(-1)}
+              aria-label="Précédent"
+              className="h-10 w-10 rounded-full bg-ink text-primary-foreground"
+            >
+              ‹
+            </button>
+            <button
+              onClick={() => scrollBy(1)}
+              aria-label="Suivant"
+              className="h-10 w-10 rounded-full bg-ink text-primary-foreground"
+            >
+              ›
+            </button>
+          </div>
+        </div>
+
+        <p className="mt-6 text-xs text-muted-foreground text-center">
+          {items.length} photos · utilisez ← → pour naviguer dans le zoom
+        </p>
+      </section>
+
+      {/* Lightbox */}
+      {lightbox !== null && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/90 p-4"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/95 p-4"
           onClick={() => setLightbox(null)}
         >
-          <img src={lightbox} alt="" className="max-h-full max-w-full object-contain rounded-sm" />
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightbox((i) => (i === null ? null : (i - 1 + items.length) % items.length));
+            }}
+            className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-primary-foreground/10 text-primary-foreground text-2xl hover:bg-primary-foreground/20"
+            aria-label="Précédent"
+          >
+            ‹
+          </button>
+          <img
+            src={items[lightbox].src}
+            alt={items[lightbox].alt}
+            className="max-h-full max-w-full object-contain rounded-sm"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightbox((i) => (i === null ? null : (i + 1) % items.length));
+            }}
+            className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-primary-foreground/10 text-primary-foreground text-2xl hover:bg-primary-foreground/20"
+            aria-label="Suivant"
+          >
+            ›
+          </button>
           <button
             className="absolute top-6 right-6 text-primary-foreground text-3xl"
             aria-label="Fermer"
+            onClick={() => setLightbox(null)}
           >
             ×
           </button>
+          <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs text-primary-foreground/70">
+            {lightbox + 1} / {items.length}
+          </p>
         </div>
       )}
 
