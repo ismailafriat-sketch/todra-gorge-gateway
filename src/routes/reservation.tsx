@@ -170,11 +170,13 @@ function Reservation() {
 
   // Guest / payment
   const [guest, setGuest] = useState({ firstName: "", lastName: "", email: "", phone: "", notes: "" });
-  const [payment, setPayment] = useState(BOOKING_CONFIG.paymentMethods[0].id);
+  const [payment, setPayment] = useState<PaymentMethod>("card");
+  const [card, setCard] = useState({ number: "", name: "", expiry: "", cvc: "" });
   const [confirmation, setConfirmation] = useState<null | {
     ref: string;
     when: string;
   }>(null);
+
 
   const nights = Math.max(0, nightsBetween(checkIn, checkOut));
   const isBlocked = BOOKING_CONFIG.blockedDates.includes(checkIn);
