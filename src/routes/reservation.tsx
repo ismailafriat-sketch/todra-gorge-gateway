@@ -247,7 +247,10 @@ function Reservation() {
   /* ═══════════════════════════ RECEIPT ═══════════════════════════ */
   if (step === "receipt" && confirmation) {
     const paymentLabel =
-      BOOKING_CONFIG.paymentMethods.find((p) => p.id === payment)?.label ?? payment;
+      payment === "paypal"
+        ? "PayPal"
+        : `Carte bancaire •••• ${card.number.replace(/\s/g, "").slice(-4)}`;
+
     return (
       <div className="min-h-screen bg-background">
         <SiteNav />
