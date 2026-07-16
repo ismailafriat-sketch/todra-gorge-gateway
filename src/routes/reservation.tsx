@@ -398,30 +398,107 @@ function Reservation() {
 
             <div>
               <p className="eyebrow">Moyen de paiement</p>
-              <div className="mt-4 space-y-3">
-                {BOOKING_CONFIG.paymentMethods.map((m) => (
-                  <label
-                    key={m.id}
-                    className={`flex gap-3 rounded-sm border p-4 cursor-pointer transition ${
-                      payment === m.id ? "border-clay bg-clay/5" : "border-border hover:bg-accent/30"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="payment"
-                      value={m.id}
-                      checked={payment === m.id}
-                      onChange={() => setPayment(m.id)}
-                      className="mt-1"
-                    />
-                    <div>
-                      <p className="text-sm font-medium">{m.label}</p>
-                      <p className="text-xs text-muted-foreground">{m.detail}</p>
-                    </div>
-                  </label>
-                ))}
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setPayment("card")}
+                  className={`flex items-center justify-between rounded-sm border p-4 text-left transition ${
+                    payment === "card" ? "border-clay bg-clay/5" : "border-border hover:bg-accent/30"
+                  }`}
+                >
+                  <div>
+                    <p className="text-sm font-medium">Carte bancaire</p>
+                    <p className="text-xs text-muted-foreground">Visa, Mastercard, Amex</p>
+                  </div>
+                  <div className="flex gap-1 text-[10px] font-semibold">
+                    <span className="rounded bg-[#1a1f71] text-white px-1.5 py-0.5">VISA</span>
+                    <span className="rounded bg-[#eb001b] text-white px-1.5 py-0.5">MC</span>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPayment("paypal")}
+                  className={`flex items-center justify-between rounded-sm border p-4 text-left transition ${
+                    payment === "paypal" ? "border-clay bg-clay/5" : "border-border hover:bg-accent/30"
+                  }`}
+                >
+                  <div>
+                    <p className="text-sm font-medium">PayPal</p>
+                    <p className="text-xs text-muted-foreground">Payez avec votre compte PayPal</p>
+                  </div>
+                  <span className="rounded bg-[#003087] text-white px-2 py-0.5 text-[11px] font-bold">
+                    Pay<span className="text-[#009cde]">Pal</span>
+                  </span>
+                </button>
               </div>
+
+              {payment === "card" && (
+                <div className="mt-4 grid gap-4 rounded-sm border border-border p-4 bg-muted/30">
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">Numéro de carte</label>
+                    <input
+                      inputMode="numeric"
+                      autoComplete="cc-number"
+                      placeholder="1234 5678 9012 3456"
+                      value={card.number}
+                      onChange={(e) => {
+                        const digits = e.target.value.replace(/\D/g, "").slice(0, 19);
+                        const spaced = digits.replace(/(.{4})/g, "$1 ").trim();
+                        setCard({ ...card, number: spaced });
+                      }}
+                      className="w-full rounded-sm border border-input bg-background px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">Nom sur la carte</label>
+                    <input
+                      autoComplete="cc-name"
+                      value={card.name}
+                      onChange={(e) => setCard({ ...card, name: e.target.value })}
+                      className="w-full rounded-sm border border-input bg-background px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-muted-foreground mb-1">Expiration (MM/AA)</label>
+                      <input
+                        inputMode="numeric"
+                        autoComplete="cc-exp"
+                        placeholder="MM/AA"
+                        value={card.expiry}
+                        onChange={(e) => {
+                          const d = e.target.value.replace(/\D/g, "").slice(0, 4);
+                          const v = d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d;
+                          setCard({ ...card, expiry: v });
+                        }}
+                        className="w-full rounded-sm border border-input bg-background px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-muted-foreground mb-1">CVC</label>
+                      <input
+                        inputMode="numeric"
+                        autoComplete="cc-csc"
+                        placeholder="123"
+                        value={card.cvc}
+                        onChange={(e) => setCard({ ...card, cvc: e.target.value.replace(/\D/g, "").slice(0, 4) })}
+                        className="w-full rounded-sm border border-input bg-background px-3 py-2 text-sm"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    🔒 Vos informations sont transmises de manière sécurisée. Aucun débit avant votre arrivée sauf tarif non-remboursable.
+                  </p>
+                </div>
+              )}
+
+              {payment === "paypal" && (
+                <div className="mt-4 rounded-sm border border-border p-4 bg-muted/30 text-sm">
+                  <p>Vous serez redirigé vers PayPal pour finaliser le paiement en toute sécurité après avoir cliqué sur « Confirmer ».</p>
+                </div>
+              )}
             </div>
+
 
             <div className="flex flex-wrap gap-3">
               <button
