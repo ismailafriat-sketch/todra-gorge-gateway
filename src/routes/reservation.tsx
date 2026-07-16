@@ -209,13 +209,21 @@ function Reservation() {
       .filter((l) => l.qty > 0),
   );
 
+  const cardValid =
+    card.number.replace(/\s/g, "").length >= 13 &&
+    card.name.trim().length > 1 &&
+    /^\d{2}\/\d{2}$/.test(card.expiry) &&
+    /^\d{3,4}$/.test(card.cvc);
+
   const canConfirm =
     validDates &&
     totalRooms > 0 &&
-    guest.firstName.trim() &&
-    guest.lastName.trim() &&
-    guest.email.trim() &&
-    guest.phone.trim();
+    !!guest.firstName.trim() &&
+    !!guest.lastName.trim() &&
+    !!guest.email.trim() &&
+    !!guest.phone.trim() &&
+    (payment === "paypal" || cardValid);
+
 
   const goCheckout = () => {
     if (!validDates || totalRooms === 0) return;
