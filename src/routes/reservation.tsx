@@ -235,7 +235,7 @@ function Reservation() {
     const ref = "AF-" + Math.random().toString(36).slice(2, 8).toUpperCase();
     const room_selections = selectedLines.map((l) => ({
       room_id: l.r.id,
-      room_title: l.r.title,
+      room_title: l.r.name,
       option: l.o.label,
       qty: l.qty,
       price_per_night: l.o.price,
