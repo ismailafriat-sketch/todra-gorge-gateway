@@ -108,3 +108,17 @@
   font-weight: 500;
   color: var(--clay);
 }
+
+@utility input {
+  display: block;
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid var(--input);
+  background: var(--background);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+@utility input:focus {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}

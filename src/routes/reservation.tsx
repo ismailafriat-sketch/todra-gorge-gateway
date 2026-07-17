@@ -230,9 +230,37 @@ function Reservation() {
     setStep("checkout");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  const confirmBooking = () => {
+  const confirmBooking = async () => {
     if (!canConfirm) return;
     const ref = "AF-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+    const room_selections = selectedLines.map((l) => ({
+      room_id: l.r.id,
+      room_title: l.r.name,
+      option: l.o.label,
+      qty: l.qty,
+      price_per_night: l.o.price,
+    }));
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      await supabase.from("bookings").insert({
+        reference: ref,
+        guest_name: `${guest.firstName} ${guest.lastName}`.trim(),
+        guest_email: guest.email,
+        guest_phone: guest.phone,
+        whatsapp: guest.phone,
+        check_in: checkIn,
+        check_out: checkOut,
+        nights,
+        room_selections,
+        total_mad: total,
+        payment_method: payment,
+        payment_status: "pending",
+        status: "pending",
+        notes: guest.notes || null,
+      });
+    } catch (e) {
+      console.error("Booking save failed", e);
+    }
     setConfirmation({ ref, when: new Date().toLocaleString("fr-FR") });
     setStep("receipt");
     window.scrollTo({ top: 0, behavior: "smooth" });
