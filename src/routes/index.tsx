@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import heroImg from "@/assets/hero-gorge.jpg";
 import diningImg from "@/assets/dining/dining_candlelit.jpg.asset.json";
 import stripLeftImg from "@/assets/common/salon.jpg.asset.json";
 import stripRightImg from "@/assets/common/dining_room.jpg.asset.json";
@@ -21,7 +20,7 @@ function Home() {
       {/* HERO */}
       <section className="relative h-[100svh] min-h-[640px] w-full overflow-hidden">
         <img
-          src={heroImg}
+          src="https://images.pexels.com/photos/33530297/pexels-photo-33530297/free-photo-of-gorgeous-view-of-todra-gorge-in-morocco.jpeg?auto=compress&cs=tinysrgb&w=1920"
           alt="Falaises rouges des Gorges du Todra au coucher du soleil"
           width={1920}
           height={1280}

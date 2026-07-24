@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import experienceImg from "@/assets/experience.jpg";
-import heroImg from "@/assets/hero-gorge.jpg";
+const heroImg = "https://images.pexels.com/photos/33530297/pexels-photo-33530297/free-photo-of-gorgeous-view-of-todra-gorge-in-morocco.jpeg?auto=compress&cs=tinysrgb&w=1920";
+const experienceImg = "https://images.pexels.com/photos/30369008/pexels-photo-30369008/free-photo-of-stunning-todra-gorge-in-morocco-s-tinghir.jpeg?auto=compress&cs=tinysrgb&w=1600";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 
@@ -24,7 +24,7 @@ function Gorge() {
       <SiteNav />
 
       <section className="relative h-[70svh] min-h-[500px] overflow-hidden">
-        <img src={heroImg} alt="Gorges du Todra" width={1920} height={1280} className="absolute inset-0 h-full w-full object-cover" />
+        <img src={heroImg} alt="Gorges du Todra" width={1920} height={1280} className="absolute inset-0 h-full w-full object-cover" crossOrigin="anonymous" />
         <div className="absolute inset-0 bg-ink/45" />
         <div className="relative container-x h-full flex items-end pb-16">
           <div>
@@ -60,7 +60,7 @@ function Gorge() {
 
       <section className="container-x">
         <div className="aspect-[21/9] overflow-hidden rounded-sm">
-          <img src={experienceImg} alt="Randonneurs dans la gorge" width={1600} height={686} loading="lazy" className="h-full w-full object-cover" />
+          <img src={experienceImg} alt="Randonneurs dans la gorge" width={1600} height={686} loading="lazy" className="h-full w-full object-cover" crossOrigin="anonymous" />
         </div>
       </section>
 
