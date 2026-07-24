@@ -1,0 +1,36 @@
+// Pexels stock images — Moroccan landscapes, architecture, and interiors
+export const images = {
+  heroTodra: "https://images.pexels.com/photos/3657471/pexels-photo-3657471.jpeg?auto=compress&cs=tinysrgb&w=1920",
+  todraGorge: "https://images.pexels.com/photos/3657471/pexels-photo-3657471.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  todraCliffs: "https://images.pexels.com/photos/2161467/pexels-photo-2161467.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  todraRiver: "https://images.pexels.com/photos/3617500/pexels-photo-3617500.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  desertDunes: "https://images.pexels.com/photos/1450279/pexels-photo-1450279.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  moroccoTown: "https://images.pexels.com/photos/3657471/pexels-photo-3657471.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  palmGrove: "https://images.pexels.com/photos/3617456/pexels-photo-3617456.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  // Rooms
+  roomStandard: "https://images.pexels.com/photos/1579739/pexels-photo-1579739.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  roomStandard2: "https://images.pexels.com/photos/2462011/pexels-photo-2462011.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  roomDeluxe: "https://images.pexels.com/photos/3144580/pexels-photo-3144580.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  roomDeluxe2: "https://images.pexels.com/photos/2029698/pexels-photo-2029698.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  roomSuite: "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  roomSuite2: "https://images.pexels.com/photos/1648776/pexels-photo-1648776.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  roomTerrace: "https://images.pexels.com/photos/1579739/pexels-photo-1579739.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  // Gallery
+  gallery1: "https://images.pexels.com/photos/3657471/pexels-photo-3657471.jpeg?auto=compress&cs=tinysrgb&w=800",
+  gallery2: "https://images.pexels.com/photos/2161467/pexels-photo-2161467.jpeg?auto=compress&cs=tinysrgb&w=800",
+  gallery3: "https://images.pexels.com/photos/1450279/pexels-photo-1450279.jpeg?auto=compress&cs=tinysrgb&w=800",
+  gallery4: "https://images.pexels.com/photos/3617500/pexels-photo-3617500.jpeg?auto=compress&cs=tinysrgb&w=800",
+  gallery5: "https://images.pexels.com/photos/3617456/pexels-photo-3617456.jpeg?auto=compress&cs=tinysrgb&w=800",
+  gallery6: "https://images.pexels.com/photos/1579739/pexels-photo-1579739.jpeg?auto=compress&cs=tinysrgb&w=800",
+  gallery7: "https://images.pexels.com/photos/2462011/pexels-photo-2462011.jpeg?auto=compress&cs=tinysrgb&w=800",
+  gallery8: "https://images.pexels.com/photos/3144580/pexels-photo-3144580.jpeg?auto=compress&cs=tinysrgb&w=800",
+  gallery9: "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800",
+  gallery10: "https://images.pexels.com/photos/2029698/pexels-photo-2029698.jpeg?auto=compress&cs=tinysrgb&w=800",
+  gallery11: "https://images.pexels.com/photos/1648776/pexels-photo-1648776.jpeg?auto=compress&cs=tinysrgb&w=800",
+  gallery12: "https://images.pexels.com/photos/3617473/pexels-photo-3617473.jpeg?auto=compress&cs=tinysrgb&w=800",
+  // Misc
+  moroccanTea: "https://images.pexels.com/photos/1099680/pexels-photo-1099680.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  moroccanFood: "https://images.pexels.com/photos/5409010/pexels-photo-5409010.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  moroccanCarpet: "https://images.pexels.com/photos/5867442/pexels-photo-5867442.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  kasbah: "https://images.pexels.com/photos/3617473/pexels-photo-3617473.jpeg?auto=compress&cs=tinysrgb&w=1600",
+};

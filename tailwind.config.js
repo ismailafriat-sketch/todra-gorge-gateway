@@ -1,0 +1,86 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  theme: {
+    extend: {
+      fontFamily: {
+        serif: ['"Cormorant Garamond"', "serif"],
+        sans: ['"Inter"', "sans-serif"],
+      },
+      colors: {
+        sand: {
+          50: "#FBF8F3",
+          100: "#F5EFE4",
+          200: "#EDE3D0",
+          300: "#DFD0B8",
+          400: "#C9B894",
+          500: "#B09D75",
+          600: "#96835E",
+          700: "#786A4D",
+          800: "#5F5540",
+          900: "#48413A",
+          950: "#2B2822",
+        },
+        terracotta: {
+          50: "#FDF4F1",
+          100: "#FAE6E0",
+          200: "#F4CFC3",
+          300: "#ECAA97",
+          400: "#E07C5F",
+          500: "#D45A38",
+          600: "#BF4729",
+          700: "#9F391F",
+          800: "#82311D",
+          900: "#6B2C1D",
+          950: "#3B160D",
+        },
+        oasis: {
+          50: "#F2F8F5",
+          100: "#DEEDE4",
+          200: "#BCDCC9",
+          300: "#8FC4A8",
+          400: "#5DA681",
+          500: "#3D8A63",
+          600: "#2D6F4E",
+          700: "#26593F",
+          800: "#214834",
+          900: "#1D3B2C",
+          950: "#0F2017",
+        },
+        night: {
+          50: "#F6F5F4",
+          100: "#E8E5E1",
+          200: "#D1CCC5",
+          300: "#B0A89D",
+          400: "#8E8475",
+          500: "#756B5C",
+          600: "#5D564A",
+          700: "#4B453C",
+          800: "#3A352F",
+          900: "#272420",
+          950: "#1A1714",
+        },
+      },
+      keyframes: {
+        fadeInUp: {
+          "0%": { opacity: "0", transform: "translateY(24px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        slowZoom: {
+          "0%": { transform: "scale(1)" },
+          "100%": { transform: "scale(1.08)" },
+        },
+      },
+      animation: {
+        fadeInUp: "fadeInUp 0.7s ease-out forwards",
+        fadeIn: "fadeIn 0.8s ease-out forwards",
+        slowZoom: "slowZoom 12s ease-out forwards",
+      },
+    },
+  },
+  plugins: [],
+};

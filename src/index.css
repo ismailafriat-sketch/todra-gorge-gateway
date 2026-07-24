@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: "Inter", sans-serif;
+    background-color: #FBF8F3;
+    color: #2B2822;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Cormorant Garamond", serif;
+    line-height: 1.2;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-7 py-3.5 bg-terracotta-600 text-white font-medium rounded-sm tracking-wide transition-all duration-300 hover:bg-terracotta-700 hover:shadow-lg active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-7 py-3.5 bg-transparent text-sand-900 font-medium rounded-sm tracking-wide border border-sand-400 transition-all duration-300 hover:bg-sand-900 hover:text-white active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center px-5 py-2.5 text-night-700 font-medium rounded-sm tracking-wide transition-all duration-300 hover:bg-sand-100 active:scale-[0.98];
+  }
+
+  .section-title {
+    @apply font-serif text-3xl md:text-4xl lg:text-5xl text-night-900 font-light tracking-tight;
+  }
+
+  .section-subtitle {
+    @apply text-sm uppercase tracking-[0.2em] text-terracotta-600 font-medium mb-3;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-white border border-sand-300 rounded-sm text-night-800 placeholder-night-400 focus:outline-none focus:border-terracotta-500 focus:ring-1 focus:ring-terracotta-500 transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-sm shadow-sm border border-sand-200 overflow-hidden transition-all duration-300 hover:shadow-xl;
+  }
+}
+
+@layer utilities {
+  .hero-overlay {
+    background: linear-gradient(180deg, rgba(27, 23, 20, 0.3) 0%, rgba(27, 23, 20, 0.5) 100%);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
