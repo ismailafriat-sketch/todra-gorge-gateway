@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send, CircleCheck as CheckCircle } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { images } from "../lib/images";
 

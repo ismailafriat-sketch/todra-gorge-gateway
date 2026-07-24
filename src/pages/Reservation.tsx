@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Calendar, Users, Send, CheckCircle, BedDouble } from "lucide-react";
+import { Calendar, Users, Send, CircleCheck as CheckCircle, BedDouble } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import type { Room } from "../types";
 import { images } from "../lib/images";
