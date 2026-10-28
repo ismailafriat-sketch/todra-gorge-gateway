@@ -112,6 +112,47 @@ export default function Todra() {
         </div>
       </section>
 
+      {/* Excursions de l'auberge */}
+      {excursions.filter((e) => e.is_available).length > 0 && (
+        <section className="py-24 px-6 bg-sand-50">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-14">
+              <p className="section-subtitle">Organisées par l'auberge</p>
+              <h2 className="section-title">Nos excursions</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {excursions
+                .filter((e) => e.is_available)
+                .map((ex) => (
+                  <div key={ex.id} className="bg-white rounded-sm border border-sand-200 overflow-hidden flex flex-col">
+                    {ex.images[0] && (
+                      <div className="h-48 overflow-hidden">
+                        <img src={ex.images[0]} alt={ex.title} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="p-6 flex flex-col flex-1">
+                      <h3 className="font-serif text-xl text-night-900">{ex.title}</h3>
+                      {ex.duration && <p className="text-night-400 text-sm mt-1">{ex.duration}</p>}
+                      <p className="text-night-500 leading-relaxed mt-3 flex-1">{ex.description}</p>
+                      <ul className="mt-4 space-y-1">
+                        {ex.details.map((d) => (
+                          <li key={d} className="text-sm text-night-500 flex items-start gap-2">
+                            <Check size={14} className="text-oasis-500 mt-1 flex-shrink-0" /> {d}
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="mt-4 font-serif text-2xl text-terracotta-600">
+                        {ex.price_mad} MAD
+                        <span className="text-sm text-night-400 font-sans"> / personne</span>
+                      </p>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Stats */}
       <section className="py-20 px-6 bg-night-900">
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
