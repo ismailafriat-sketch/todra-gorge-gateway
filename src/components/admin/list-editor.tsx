@@ -25,20 +25,20 @@ export function ListEditor({
         {value.map((item, i) => (
           <span
             key={i}
-            className="inline-flex items-center gap-1.5 rounded-full bg-accent/60 pl-3 pr-1.5 py-1 text-xs"
+            className="inline-flex items-center gap-1.5 rounded-full bg-sand-100 pl-3 pr-1.5 py-1 text-xs text-night-700"
           >
             {item}
             <button
               type="button"
               onClick={() => onChange(value.filter((_, j) => j !== i))}
-              className="rounded-full hover:bg-background p-0.5"
+              className="rounded-full hover:bg-sand-200 p-0.5"
             >
               <X className="w-3 h-3" />
             </button>
           </span>
         ))}
         {value.length === 0 && (
-          <span className="text-xs text-muted-foreground italic">Aucun élément</span>
+          <span className="text-xs text-night-300 italic">Aucun élément</span>
         )}
       </div>
       <div className="flex gap-2">
@@ -52,12 +52,12 @@ export function ListEditor({
             }
           }}
           placeholder={placeholder}
-          className="flex-1 rounded-lg border border-input bg-background px-3 py-2 text-sm"
+          className="input-field flex-1"
         />
         <button
           type="button"
           onClick={add}
-          className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground hover:bg-primary/90"
+          className="inline-flex items-center gap-1 rounded-sm bg-terracotta-600 px-3 py-2 text-sm text-white hover:bg-terracotta-700"
         >
           <Plus className="w-4 h-4" /> Ajouter
         </button>

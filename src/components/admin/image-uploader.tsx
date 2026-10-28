@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X, Upload } from "lucide-react";
-import { uploadMedia } from "@/lib/media";
+import { uploadMedia } from "../lib/media";
 import { toast } from "sonner";
 
 export function ImageUploader({
@@ -36,19 +36,19 @@ export function ImageUploader({
     <div>
       <div className="grid grid-cols-3 md:grid-cols-4 gap-2 mb-3">
         {value.map((url, i) => (
-          <div key={i} className="relative group aspect-square rounded-lg overflow-hidden border border-border">
+          <div key={i} className="relative group aspect-square rounded-sm overflow-hidden border border-sand-300">
             <img src={url} alt="" className="w-full h-full object-cover" />
             <button
               type="button"
               onClick={() => onChange(value.filter((_, j) => j !== i))}
-              className="absolute top-1 right-1 rounded-full bg-black/60 text-white p-1 opacity-0 group-hover:opacity-100"
+              className="absolute top-1 right-1 rounded-full bg-night-900/60 text-white p-1 opacity-0 group-hover:opacity-100"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
         ))}
         <label
-          className="aspect-square flex flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-border text-muted-foreground text-xs cursor-pointer hover:bg-accent/40"
+          className="aspect-square flex flex-col items-center justify-center gap-1 rounded-sm border-2 border-dashed border-sand-300 text-night-400 text-xs cursor-pointer hover:border-terracotta-400 hover:text-terracotta-600"
         >
           <Upload className="w-5 h-5" />
           {busy ? "Envoi…" : "Ajouter"}
