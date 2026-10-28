@@ -1,15 +1,19 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Calendar, Users, Send, CircleCheck as CheckCircle, BedDouble } from "lucide-react";
+import { useData } from "../lib/data-context";
 import { supabase } from "../lib/supabase";
-import type { Room } from "../types";
 import { images } from "../lib/images";
 
 export default function Reservation() {
   const location = useLocation();
   const preselectedRoom = (location.state as { roomId?: string; roomName?: string }) || {};
+  const { rooms } = useData();
 
-  const [rooms, setRooms] = useState<Room[]>([]);
+  const availableRooms = rooms
+    .filter((r) => r.is_available)
+    .sort((a, b) => a.price_per_night - b.price_per_night);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -22,14 +26,6 @@ export default function Reservation() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    async function loadRooms() {
-      const { data } = await supabase.from("rooms").select("*").order("price_per_night", { ascending: true });
-      setRooms(data || []);
-    }
-    loadRooms();
-  }, []);
 
   useEffect(() => {
     if (preselectedRoom.roomId) {
@@ -56,16 +52,40 @@ export default function Reservation() {
       return;
     }
 
-    const { error: dbError } = await supabase.from("reservations").insert({
-      name: form.name,
-      email: form.email,
-      phone: form.phone,
+    const nights = Math.max(
+      1,
+      Math.round(
+        (new Date(form.check_out).getTime() - new Date(form.check_in).getTime()) / 86400000,
+      ),
+    );
+
+    const selectedRoom = availableRooms.find((r) => r.id === form.room_id);
+    const room_selections = selectedRoom
+      ? [
+          {
+            room_id: selectedRoom.id,
+            title: selectedRoom.name,
+            qty: 1,
+            price: selectedRoom.price_per_night,
+          },
+        ]
+      : [];
+    const total_mad = (selectedRoom?.price_per_night || 0) * nights;
+
+    const { error: dbError } = await supabase.from("bookings").insert({
+      guest_name: form.name,
+      guest_email: form.email,
+      guest_phone: form.phone,
+      whatsapp: form.phone,
       check_in: form.check_in,
       check_out: form.check_out,
-      guests: form.guests,
-      room_id: form.room_id || null,
-      message: form.message,
-      status: "pending",
+      nights,
+      room_selections,
+      total_mad,
+      payment_method: "pending",
+      payment_status: "pending",
+      notes: form.message,
+      status: "new",
     });
 
     if (dbError) {
@@ -178,15 +198,15 @@ export default function Reservation() {
                 </label>
                 <select name="room_id" value={form.room_id} onChange={handleChange} className="input-field">
                   <option value="">Indifférent</option>
-                  {rooms.map((room) => (
+                  {availableRooms.map((room) => (
                     <option key={room.id} value={room.id}>
-                      {room.name} — {room.price_per_night} €/nuit
+                      {room.name} — {room.price_per_night} MAD/nuit
                     </option>
                   ))}
                 </select>
                 {selectedRoom && (
                   <p className="text-sm text-night-400 mt-2">
-                    {selectedRoom.capacity} personnes max · {selectedRoom.size} m² · {selectedRoom.beds}
+                    {selectedRoom.capacity} personnes max{selectedRoom.size > 0 ? ` · ${selectedRoom.size} m²` : ""}{selectedRoom.beds ? ` · ${selectedRoom.beds}` : ""}
                   </p>
                 )}
               </div>

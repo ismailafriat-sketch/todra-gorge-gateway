@@ -1,77 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Users, Maximize, BedDouble, Check, ArrowRight } from "lucide-react";
-import { supabase } from "../lib/supabase";
-import type { Room } from "../types";
+import { useData } from "../lib/data-context";
 import { images } from "../lib/images";
 
-const fallbackRooms: Room[] = [
-  {
-    id: "1",
-    name: "Chambre Standard",
-    slug: "chambre-standard",
-    description: "Une chambre confortable avec vue sur la palmeraie, idéale pour les voyageurs.",
-    long_description:
-      "Notre chambre standard offre tout le confort nécessaire pour un séjour reposant. Avec ses murs en terre crue, ses tapis berbères et sa fenêtre ouverte sur la palmeraie, elle incarne l'authenticité de l'architecture marocaine. Climatisée et équipée d'une salle de bain privative.",
-    price_per_night: 35,
-    capacity: 2,
-    size: 18,
-    beds: "1 lit double",
-    amenities: ["Climatisation", "Salle de bain privée", "Wi-Fi", "Vue palmeraie"],
-    image_url: images.roomStandard,
-    gallery_urls: [images.roomStandard, images.roomStandard2],
-    featured: true,
-  },
-  {
-    id: "2",
-    name: "Chambre Deluxe",
-    slug: "chambre-deluxe",
-    description: "Plus spacieuse, avec un coin salon et une terrasse privée face aux falaises.",
-    long_description:
-      "La chambre deluxe propose un espace généreux avec un coin salon traditionnel, des draps en coton bio et une terrasse privée d'où vous admirerez les falaises du Todra au lever du soleil. La salle de bain en tadelakt apporte une touche d'élégance naturelle.",
-    price_per_night: 55,
-    capacity: 3,
-    size: 28,
-    beds: "1 lit double + 1 canapé-lit",
-    amenities: ["Climatisation", "Salle de bain en tadelakt", "Terrasse privée", "Wi-Fi", "Vue falaises", "Coin salon"],
-    image_url: images.roomDeluxe,
-    gallery_urls: [images.roomDeluxe, images.roomDeluxe2],
-    featured: true,
-  },
-  {
-    id: "3",
-    name: "Suite Berbère",
-    slug: "suite-berbere",
-    description: "Notre plus belle chambre, avec terrasse panoramique et décor traditionnel.",
-    long_description:
-      "La Suite Berbère est notre joie. Un espace de 40 m² au décor soigné, mêlant artisanat local et confort moderne. La terrasse panoramique offre une vue imprenable sur les gorges et la palmeraie. Parfaite pour un séjour romantique ou une escapade en famille.",
-    price_per_night: 85,
-    capacity: 4,
-    size: 40,
-    beds: "1 lit double + 2 lits simples",
-    amenities: ["Climatisation", "Salle de bain en tadelakt", "Terrasse panoramique", "Wi-Fi", "Vue gorges", "Coin salon", "Petit-déjeuner inclus"],
-    image_url: images.roomSuite,
-    gallery_urls: [images.roomSuite, images.roomSuite2],
-    featured: true,
-  },
-];
-
 export default function Rooms() {
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadRooms() {
-      const { data } = await supabase.from("rooms").select("*").order("price_per_night", { ascending: true });
-      if (data && data.length > 0) {
-        setRooms(data);
-      } else {
-        setRooms(fallbackRooms);
-      }
-      setLoading(false);
-    }
-    loadRooms();
-  }, []);
+  const { rooms, loading } = useData();
 
   return (
     <div className="pt-20">
@@ -96,7 +30,10 @@ export default function Rooms() {
           {loading ? (
             <p className="text-center text-night-400">Chargement…</p>
           ) : (
-            rooms.map((room, index) => (
+            rooms
+              .slice()
+              .sort((a, b) => a.price_per_night - b.price_per_night)
+              .map((room, index) => (
               <div
                 key={room.id}
                 id={room.slug}
@@ -128,10 +65,12 @@ export default function Rooms() {
                       <Users size={18} className="text-terracotta-500" />
                       {room.capacity} personnes
                     </span>
-                    <span className="flex items-center gap-2">
-                      <Maximize size={18} className="text-terracotta-500" />
-                      {room.size} m²
-                    </span>
+                    {room.size > 0 && (
+                      <span className="flex items-center gap-2">
+                        <Maximize size={18} className="text-terracotta-500" />
+                        {room.size} m²
+                      </span>
+                    )}
                     <span className="flex items-center gap-2">
                       <BedDouble size={18} className="text-terracotta-500" />
                       {room.beds}
@@ -150,17 +89,21 @@ export default function Rooms() {
                   <div className="flex items-center justify-between border-t border-sand-200 pt-6">
                     <div>
                       <span className="font-serif text-3xl text-terracotta-600">
-                        {room.price_per_night} €
+                        {room.price_per_night} MAD
                       </span>
                       <span className="text-night-400 text-sm"> / nuit</span>
                     </div>
-                    <Link
-                      to="/reserver"
-                      state={{ roomId: room.id, roomName: room.name }}
-                      className="btn-primary"
-                    >
-                      Réserver <ArrowRight size={16} className="ml-2" />
-                    </Link>
+                    {room.is_available ? (
+                      <Link
+                        to="/reserver"
+                        state={{ roomId: room.id, roomName: room.name }}
+                        className="btn-primary"
+                      >
+                        Réserver <ArrowRight size={16} className="ml-2" />
+                      </Link>
+                    ) : (
+                      <span className="text-sm text-night-400 italic">Complète</span>
+                    )}
                   </div>
                 </div>
               </div>

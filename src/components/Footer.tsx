@@ -1,7 +1,14 @@
 import { Link } from "react-router-dom";
 import { MapPin, Phone, Mail, Facebook, Instagram } from "lucide-react";
+import { useData } from "../lib/data-context";
 
 export default function Footer() {
+  const { siteSettings } = useData();
+  const socialLinks = [
+    { url: siteSettings.facebook_url, icon: Facebook, label: "Facebook" },
+    { url: siteSettings.instagram_url, icon: Instagram, label: "Instagram" },
+  ].filter((s) => s.url);
+
   return (
     <footer className="bg-night-900 text-sand-200">
       <div className="max-w-7xl mx-auto px-6 py-16">
@@ -36,25 +43,33 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-3">
                 <MapPin size={18} className="text-terracotta-400 flex-shrink-0 mt-0.5" />
-                <span>Tinghir, Gorges du Todra, Maroc</span>
+                <span>{siteSettings.address || "Tinghir, Gorges du Todra, Maroc"}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={18} className="text-terracotta-400 flex-shrink-0" />
-                <span>+212 6 12 34 56 78</span>
+                <span>{siteSettings.phone}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={18} className="text-terracotta-400 flex-shrink-0" />
-                <span>contact@aubergelefestival.ma</span>
+                <span>{siteSettings.email}</span>
               </li>
             </ul>
-            <div className="flex gap-4 mt-5">
-              <a href="#" className="text-sand-400 hover:text-white transition-colors" aria-label="Facebook">
-                <Facebook size={20} />
-              </a>
-              <a href="#" className="text-sand-400 hover:text-white transition-colors" aria-label="Instagram">
-                <Instagram size={20} />
-              </a>
-            </div>
+            {socialLinks.length > 0 && (
+              <div className="flex gap-4 mt-5">
+                {socialLinks.map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sand-400 hover:text-white transition-colors"
+                    aria-label={s.label}
+                  >
+                    <s.icon size={20} />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

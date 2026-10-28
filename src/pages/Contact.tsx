@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { MapPin, Phone, Mail, Clock, Send, CircleCheck as CheckCircle } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import { useData } from "../lib/data-context";
 import { images } from "../lib/images";
 
 export default function Contact() {
+  const { siteSettings } = useData();
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
@@ -32,6 +34,13 @@ export default function Contact() {
     setForm({ name: "", email: "", subject: "", message: "" });
   };
 
+  const infoItems = [
+    { icon: MapPin, label: "Adresse", value: siteSettings.address || "Tinghir, Gorges du Todra, Région de Drâa-Tafilalet, Maroc" },
+    { icon: Phone, label: "Téléphone", value: siteSettings.phone },
+    { icon: Mail, label: "Email", value: siteSettings.email },
+    { icon: Clock, label: "Réception", value: "Ouverte tous les jours, 7h — 22h" },
+  ];
+
   return (
     <div className="pt-20">
       {/* Header */}
@@ -59,12 +68,7 @@ export default function Contact() {
               Nous sommes à votre écoute
             </h2>
             <div className="space-y-6">
-              {[
-                { icon: MapPin, label: "Adresse", value: "Tinghir, Gorges du Todra, Région de Drâa-Tafilalet, Maroc" },
-                { icon: Phone, label: "Téléphone", value: "+212 6 12 34 56 78" },
-                { icon: Mail, label: "Email", value: "contact@aubergelefestival.ma" },
-                { icon: Clock, label: "Réception", value: "Ouverte tous les jours, 7h — 22h" },
-              ].map((item) => (
+              {infoItems.map((item) => (
                 <div key={item.label} className="flex gap-4">
                   <div className="flex-shrink-0 w-12 h-12 rounded-full bg-sand-100 text-terracotta-600 flex items-center justify-center">
                     <item.icon size={22} />

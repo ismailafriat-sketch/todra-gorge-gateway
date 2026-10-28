@@ -1,31 +1,16 @@
 import { useState } from "react";
 import { X } from "lucide-react";
+import { useData } from "../lib/data-context";
 import { images } from "../lib/images";
 
-const galleryItems = [
-  { id: 1, title: "Gorges du Todra", category: "Paysages", image: images.gallery1, caption: "Les falaises spectaculaires du Todra" },
-  { id: 2, title: "Falaises", category: "Paysages", image: images.gallery2, caption: "Parois de 300 mètres de hauteur" },
-  { id: 3, title: "Dunes du désert", category: "Paysages", image: images.gallery3, caption: "Le Sahara à quelques heures de l'auberge" },
-  { id: 4, title: "Rivière du Todra", category: "Paysages", image: images.gallery4, caption: "L'eau qui traverse la gorge" },
-  { id: 5, title: "Palmeraie", category: "Paysages", image: images.gallery5, caption: "La palmeraie de Tinghir" },
-  { id: 6, title: "Chambre Standard", category: "Chambres", image: images.gallery6, caption: "Confort et authenticité" },
-  { id: 7, title: "Chambre Deluxe", category: "Chambres", image: images.gallery7, caption: "Espace et élégance" },
-  { id: 8, title: "Suite Berbère", category: "Chambres", image: images.gallery8, caption: "Notre plus belle chambre" },
-  { id: 9, title: "Terrasse", category: "Chambres", image: images.gallery9, caption: "Vue panoramique" },
-  { id: 10, title: "Salon traditionnel", category: "Chambres", image: images.gallery10, caption: "Coin salon berbère" },
-  { id: 11, title: "Décor marocain", category: "Détails", image: images.gallery11, caption: "Artisanat local" },
-  { id: 12, title: "Kasbah", category: "Paysages", image: images.gallery12, caption: "Architecture de terre crue" },
-];
-
-const categories = ["Tous", "Paysages", "Chambres", "Détails"];
-
 export default function Gallery() {
+  const { galleryPhotos } = useData();
   const [filter, setFilter] = useState("Tous");
-  const [lightbox, setLightbox] = useState<number | null>(null);
+  const [lightbox, setLightbox] = useState<string | null>(null);
 
-  const filtered = filter === "Tous"
-    ? galleryItems
-    : galleryItems.filter((item) => item.category === filter);
+  const categories = ["Tous", ...Array.from(new Set(galleryPhotos.map((p) => p.category)))];
+  const filtered =
+    filter === "Tous" ? galleryPhotos : galleryPhotos.filter((p) => p.category === filter);
 
   return (
     <div className="pt-20">
@@ -73,7 +58,7 @@ export default function Gallery() {
               className="group relative h-64 overflow-hidden rounded-sm cursor-pointer"
             >
               <img
-                src={item.image}
+                src={item.image_url}
                 alt={item.title}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
@@ -100,15 +85,15 @@ export default function Gallery() {
           </button>
           <div className="max-w-4xl max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
             <img
-              src={galleryItems.find((i) => i.id === lightbox)?.image}
-              alt={galleryItems.find((i) => i.id === lightbox)?.title}
+              src={galleryPhotos.find((i) => i.id === lightbox)?.image_url}
+              alt={galleryPhotos.find((i) => i.id === lightbox)?.title}
               className="max-w-full max-h-[80vh] object-contain rounded-sm"
             />
             <p className="text-center text-white mt-4 font-serif text-xl">
-              {galleryItems.find((i) => i.id === lightbox)?.title}
+              {galleryPhotos.find((i) => i.id === lightbox)?.title}
             </p>
             <p className="text-center text-sand-300 text-sm mt-1">
-              {galleryItems.find((i) => i.id === lightbox)?.caption}
+              {galleryPhotos.find((i) => i.id === lightbox)?.caption}
             </p>
           </div>
         </div>
