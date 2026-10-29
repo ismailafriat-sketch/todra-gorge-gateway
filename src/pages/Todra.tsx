@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Mountain, Compass, Camera, Footprints, ArrowRight } from "lucide-react";
+import { Mountain, Compass, Camera, Footprints, ArrowRight, Check } from "lucide-react";
+import { useData } from "../lib/data-context";
 import { images } from "../lib/images";
 
 const activities = [
@@ -26,6 +27,8 @@ const activities = [
 ];
 
 export default function Todra() {
+  const { excursions } = useData();
+
   return (
     <div className="pt-20">
       {/* Hero */}
