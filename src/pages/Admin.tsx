@@ -151,7 +151,11 @@ export default function Admin() {
     setGalleryRows((galleryRes.data || []) as GalleryRow[]);
     if (settingsRes.data) {
       setSettingsId(settingsRes.data.id);
-      setSettingsForm({ ...siteSettings, ...settingsRes.data });
+      const row = settingsRes.data as Record<string, unknown>;
+      const cleaned = Object.fromEntries(
+        Object.entries(row).filter(([, v]) => v != null),
+      );
+      setSettingsForm({ ...siteSettings, ...cleaned } as typeof siteSettings);
     }
   }, [siteSettings]);
 
