@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X, Upload } from "lucide-react";
-import { uploadMedia } from "../lib/media";
+import { uploadMedia } from "../../lib/media";
 import { toast } from "sonner";
 
 export function ImageUploader({
