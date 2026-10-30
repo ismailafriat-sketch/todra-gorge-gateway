@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "./supabase";
 
 // Upload a file to the media bucket and return a long-lived signed URL.
 // Since the workspace blocks public buckets, we sign for 10 years.
